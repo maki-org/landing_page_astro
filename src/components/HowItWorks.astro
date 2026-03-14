@@ -1,0 +1,101 @@
+---
+const steps = [
+  {
+    number: "01",
+    text: "Place it. Set it up. Start listening — all in under 20 minutes."
+  },
+  {
+    number: "02",
+    text: "Process and Enrich — Our fine-tuned AI models analyze raw audio and convert it into detailed, enriched data and insights."
+  },
+  {
+    number: "03",
+    text: "Receive and Use — Receive the processed reports and insights directly in an application, ready to view, analyze, and act on."
+  }
+];
+---
+
+<section id="how-it-works" class="how-it-works-section">
+  <div class="container section-container">
+    <div class="header-wrapper">
+      <h2 class="section-title">How it works?</h2>
+    </div>
+
+    <div class="steps-list">
+      {steps.map((step) => (
+        <div class="step-item">
+          <span class="step-number">{step.number}</span>
+          <p class="step-text">{step.text}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .how-it-works-section {
+    padding: 100px 0;
+  }
+
+  .section-container {
+    padding: 0 40px;
+    max-width: 1280px;
+  }
+
+  .header-wrapper {
+    border-top: 1px solid var(--c-divider);
+    padding-top: 80px;
+    margin-bottom: 60px;
+  }
+
+  .section-title {
+    font-size: 60px;
+    color: var(--c-black);
+    text-align: left;
+    max-width: 400px;
+  }
+
+  .steps-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .step-item {
+    display: flex;
+    gap: 32px;
+    padding: 24px 0;
+    border-top: 1.2px solid var(--c-divider);
+    align-items: flex-start;
+  }
+
+  .step-item:first-child {
+    border-top: none;
+  }
+
+  .step-number {
+    font-family: var(--font-sans);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--c-text-muted);
+    min-width: 30px;
+  }
+
+  .step-text {
+    font-family: var(--font-sans);
+    font-size: 18px;
+    color: var(--c-black);
+    max-width: 1280px;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 768px) {
+    .section-title {
+      font-size: 48px;
+    }
+    .step-item {
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+</style>

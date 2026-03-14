@@ -1,0 +1,161 @@
+---
+const features = [
+  {
+    number: "01",
+    title: "Captures Everything",
+    text: "No word missed. Crystal-clear capture, even in noisy or large rooms."
+  },
+  {
+    number: "02",
+    title: "Learns your domain",
+    text: "Improves with every use, learning and adapting to your vocabulary and speaking style."
+  },
+  {
+    number: "03",
+    title: "Works anywhere",
+    text: "No setup, no apps, no configuration — simply place the device and it’s ready to go."
+  }
+];
+---
+
+<section id="why-maki" class="why-maki-section">
+  <div class="container section-container">
+    <div class="header-wrapper">
+      <h2 class="section-title">Why Choose Maki?</h2>
+      <p class="section-subtitle">
+        You need a solution that keeps up. That’s why we developed Maki. It captures every lecture and converts it into detailed notes so students never miss key points.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      {features.map((feat) => (
+        <div class="feature-card">
+          <div class="feature-number">{feat.number}</div>
+          <div class="feature-content">
+            <h3 class="feature-title">{feat.title}</h3>
+            <p class="feature-text">{feat.text}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="section-image-wrapper">
+      <img src="/images/whatsapp_image_2026-02-10_at_17.45.57_2.png" alt="Maki App Details" class="section-image" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .why-maki-section {
+    padding: 100px 0;
+  }
+
+  .section-container {
+    padding: 0 40px;
+    max-width: 1280px;
+  }
+
+  .header-wrapper {
+    border-top: 1px solid #929292;
+    padding-top: 80px;
+    margin-bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: 60px;
+    color: var(--c-black);
+    margin-bottom: 40px;
+  }
+
+  .section-subtitle {
+    font-size: 16px;
+    line-height: 22px;
+    color: var(--c-text-muted);
+    max-width: 720px;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 100px;
+  }
+
+  .feature-card {
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+  }
+
+  .feature-number {
+    font-size: 80px;
+    line-height: 1;
+    color: var(--c-text-numbers);
+    font-weight: 400; /* As per Figma DM Sans usually inherits 400 but let's leave it */
+  }
+
+  .feature-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .feature-title {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    color: var(--c-black);
+    font-weight: 400;
+  }
+
+  .feature-text {
+    font-size: 15px;
+    line-height: 21px;
+    color: var(--c-black);
+  }
+
+  .section-image-wrapper {
+    width: 100%;
+    max-width: 1145px;
+    margin: 0 auto;
+    border-radius: 20px;
+    box-shadow: 0px 4px 8px 0px rgba(72, 92, 17, 0.25);
+    overflow: hidden;
+  }
+
+  .section-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .section-image-wrapper:hover .section-image {
+    transform: scale(1.02);
+  }
+
+  @media (max-width: 1024px) {
+    .features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .section-title {
+      font-size: 48px;
+    }
+    .features-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .feature-card {
+      gap: 20px;
+    }
+    .feature-number {
+      font-size: 60px;
+    }
+  }
+</style>

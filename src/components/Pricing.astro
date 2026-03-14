@@ -1,0 +1,88 @@
+---
+---
+
+<section id="pricing" class="pricing-section">
+  <div class="container section-container">
+    <div class="header-wrapper">
+      <h2 class="section-title">Pricing</h2>
+    </div>
+
+    <div class="pricing-content">
+      <a href="#contact" class="btn-pricing">
+        <span>Ask for pricing</span>
+        <img src="/images/arrow.svg" alt="" width="10" height="24" class="btn-arrow" />
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pricing-section {
+    padding: 100px 0;
+  }
+
+  .section-container {
+    padding: 0 40px;
+    max-width: 1280px;
+  }
+
+  .header-wrapper {
+    border-top: 1px solid #929292;
+    padding-top: 80px;
+    margin-bottom: 80px;
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: 60px;
+    color: var(--c-black);
+  }
+
+  .pricing-content {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+
+  .btn-pricing {
+    background-color: var(--c-secondary);
+    color: var(--c-black);
+    border-radius: 1000px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 340px;
+    height: 72px;
+    font-size: 17px;
+    font-weight: 700;
+    font-family: var(--font-sans);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+  }
+
+  .btn-pricing:hover {
+    transform: translateY(-2px);
+    background-color: #8da464;
+  }
+
+  /* SVG styling to match black text, maybe filter as the original might be white */
+  .btn-arrow {
+    filter: invert(1); /* Assuming arrow.svg is white as it was on #485C11 background */
+    transition: transform 0.3s ease;
+  }
+
+  .btn-pricing:hover .btn-arrow {
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 768px) {
+    .section-title {
+      font-size: 48px;
+    }
+    .btn-pricing {
+      width: 100%;
+      max-width: 340px;
+    }
+  }
+</style>

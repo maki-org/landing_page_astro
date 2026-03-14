@@ -1,0 +1,134 @@
+:root {
+  /* Colors */
+  --c-white: #ffffff;
+  --c-black: #000000;
+  
+  --c-primary: #485c11; /* Green */
+  --c-secondary: #a1b777; /* Light Green */
+  --c-border-hero: #8e9b77; /* Border green */
+  
+  --c-text-main: #000000;
+  --c-text-muted: #6f6f6f;
+  --c-text-numbers: #929292;
+  
+  --c-divider: #e9e9e9;
+
+  /* Typography */
+  --font-sans: 'DM Sans', sans-serif;
+  --font-serif: 'Crimson Text', serif;
+  --font-logo: 'Syne', sans-serif;
+}
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-sans);
+  color: var(--c-text-main);
+  background-color: var(--c-white);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 400; /* Let specific classes define weight, mostly Crimson is normal in headers here except perhaps bolder */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Utilities */
+.container {
+  width: 100%;
+  max-width: 1280px; /* from Figma Desktop Frame width */
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--c-primary);
+  color: var(--c-white);
+  border-radius: 1000px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 14px 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  border: 1px solid var(--c-primary);
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #3b4d0e;
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--c-primary);
+  border-radius: 1000px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 14px 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--c-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  background-color: var(--c-primary);
+  color: var(--c-white);
+}
+
+/* Layout Utilites */
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.gap-8 { gap: 8px; }
+.gap-16 { gap: 16px; }
+.gap-24 { gap: 24px; }
+.gap-32 { gap: 32px; }
+
+/* Text Utilities */
+.text-center { text-align: center; }
+.text-muted { color: var(--c-text-muted); }
+.text-primary { color: var(--c-primary); }
