@@ -1,8 +1,8 @@
 ---
 ---
 
-<section class="hero-section">
-  <div class="container hero-container">
+<section class="hero-section" id="hero-container">
+  <div class="container hero-container-inner">
     <hr class="hero-divider" />
     
     <h1 class="hero-title">Introducing maki.</h1>
@@ -16,8 +16,9 @@
       <a href="#demo" class="btn-outline">Watch A Demo</a>
     </div>
 
-    <div class="hero-image-wrapper">
-      <img src="/images/whatsapp_image_2026-02-10_at_17.45.57_1.png" alt="Maki App Dashboard" class="hero-image" />
+    <!-- Pinned sequence container -->
+    <div class="hero-image-wrapper" id="hero-image-container">
+      <canvas id="hero-lightpass"></canvas>
     </div>
   </div>
 </section>
@@ -27,10 +28,12 @@
     padding-top: 95px; /* Offset from top */
     text-align: center;
     position: relative;
-    overflow: hidden;
+    /* We add extra height here so the user has room to scroll and trigger the animation 
+       without instantly scrolling past the hero. GSAP will scrub based on this. */
+    min-height: 200vh;
   }
 
-  .hero-container {
+  .hero-container-inner {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -48,7 +51,7 @@
 
   .hero-title {
     font-size: 160px;
-    line-height: 1.1; /* slightly tighter than 136px / 160px ratio */
+    line-height: 1.1; 
     color: var(--c-black);
     margin-top: 50px;
     margin-bottom: 20px;
@@ -82,7 +85,7 @@
   }
 
   .hero-actions {
-    margin-bottom: 100px;
+    margin-bottom: 60px;
     animation: fadeUp 0.8s ease-out 0.6s forwards;
     transform: translateY(20px);
     opacity: 0;
@@ -105,20 +108,21 @@
     border-radius: 20px;
     box-shadow: 0px 4px 8px 0px rgba(72, 92, 17, 0.25);
     overflow: hidden;
-    animation: fadeUp 1s ease-out 0.8s forwards;
-    transform: translateY(40px);
+    background: var(--c-black);
+    /* For canvas sizing */
+    display: flex;
+    justify-content: center;
+    align-items: center;
     opacity: 0;
+    transform: translateY(40px);
+    animation: fadeUp 1s ease-out 0.8s forwards;
   }
 
-  .hero-image {
+  #hero-lightpass {
     width: 100%;
-    height: auto;
+    max-height: 70vh;
     object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-
-  .hero-image-wrapper:hover .hero-image {
-    transform: scale(1.02);
+    display: block;
   }
 
   @keyframes fadeUp {
@@ -134,6 +138,7 @@
     }
     .hero-section {
       padding-top: 120px;
+      min-height: 150vh;
     }
   }
 
@@ -154,3 +159,62 @@
     }
   }
 </style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const canvas = document.getElementById("hero-lightpass") as HTMLCanvasElement;
+  
+  if (canvas) {
+    const context = canvas.getContext("2d");
+    
+    const frameCount = 240;
+    const currentFrame = (index: number) => {
+      return `/frames/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
+    };
+
+    const images: HTMLImageElement[] = [];
+    const sequence = { frame: 0 };
+
+    // Preload images
+    for (let i = 0; i < frameCount; i++) {
+        const img = new Image();
+        img.src = currentFrame(i);
+        images.push(img);
+    }
+
+    images[0].onload = () => {
+      // Setup initial canvas dimensions based on the first image's aspect ratio
+      // to keep it crisp. CSS handles bounding.
+      canvas.width = images[0].width;
+      canvas.height = images[0].height;
+      render();
+    };
+
+    function render() {
+      if (images[sequence.frame] && context) {
+        const img = images[sequence.frame];
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(img, 0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    // Scroll trigger to scrub through frames while inside the hero section
+    gsap.to(sequence, {
+      frame: frameCount - 1,
+      snap: "frame",
+      ease: "none",
+      scrollTrigger: {
+        trigger: "#hero-container",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 0.5,
+        pin: "#hero-image-container", // Pin the image wrapper as they scroll past the space
+      },
+      onUpdate: () => render() // Explicit arrow function wrapper to avoid losing 'this'
+    });
+  }
+</script>
