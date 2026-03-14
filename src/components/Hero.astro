@@ -145,97 +145,108 @@
   }
 </style>
 
-<script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  <script>
+    import { gsap } from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-  gsap.registerPlugin(ScrollTrigger);
+    gsap.registerPlugin(ScrollTrigger);
 
-  const canvas = document.getElementById("hero-lightpass") as HTMLCanvasElement;
-  
-  if (canvas) {
-    const context = canvas.getContext("2d");
+    const canvas = document.getElementById("hero-lightpass") as HTMLCanvasElement;
     
-    const frameCount = 240;
-    const currentFrame = (index: number) => {
-      return `/frames/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
-    };
+    if (canvas) {
+      const context = canvas.getContext("2d");
+      
+      const frameCount = 240;
+      const currentFrame = (index: number) => {
+        return `/frames/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
+      };
 
-    const images: HTMLImageElement[] = [];
-    const sequence = { frame: frameCount - 1 }; // Start at the LAST frame
+      const images: HTMLImageElement[] = [];
+      const sequence = { frame: 0 }; // Start at the FIRST frame
 
-    // Preload images
-    for (let i = 0; i < frameCount; i++) {
-        const img = new Image();
-        img.src = currentFrame(i);
-        images.push(img);
-    }
+      // Preload images
+      for (let i = 0; i < frameCount; i++) {
+          const img = new Image();
+          img.src = currentFrame(i);
+          images.push(img);
+      }
 
-    images[0].onload = () => {
-      resizeCanvas();
-      window.addEventListener('resize', resizeCanvas);
-    };
+      images[0].onload = () => {
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+      };
 
-    function resizeCanvas() {
-      // Make canvas size internal match viewport size
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      render();
-    }
+      function resizeCanvas() {
+        // Make canvas size internal match viewport size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        render();
+      }
 
-    function render() {
-      if (images[sequence.frame] && context) {
-        const img = images[sequence.frame];
-        const canvasRatio = canvas.width / canvas.height;
-        const imgRatio = img.width / img.height;
+      function render() {
+        if (images[sequence.frame] && context) {
+          const img = images[sequence.frame];
+          const canvasRatio = canvas.width / canvas.height;
+          const imgRatio = img.width / img.height;
 
-        let drawWidth, drawHeight, offsetX, offsetY;
+          let drawWidth, drawHeight, offsetX, offsetY;
 
-        // Cover logic to fill screen
-        if (canvasRatio > imgRatio) {
-          drawWidth = canvas.width;
-          drawHeight = canvas.width / imgRatio;
-          offsetX = 0;
-          offsetY = (canvas.height - drawHeight) / 2;
-        } else {
-          drawWidth = canvas.height * imgRatio;
-          drawHeight = canvas.height;
-          offsetX = (canvas.width - drawWidth) / 2;
-          offsetY = 0;
+          // Cover logic to fill screen
+          if (canvasRatio > imgRatio) {
+            drawWidth = canvas.width;
+            drawHeight = canvas.width / imgRatio;
+            offsetX = 0;
+            offsetY = (canvas.height - drawHeight) / 2;
+          } else {
+            drawWidth = canvas.height * imgRatio;
+            drawHeight = canvas.height;
+            offsetX = (canvas.width - drawWidth) / 2;
+            offsetY = 0;
+          }
+
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
         }
-
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
       }
+
+      // Master Timeline for ScrollTrigger
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#hero-sequence",
+          start: "top top",
+          end: "+=4000", // Extended scroll space for the longer sequence
+          scrub: 0.5,
+          pin: true,
+        }
+      });
+
+      // 1: Animate frames forward from 0 -> 239
+      tl.to(sequence, {
+        frame: frameCount - 1,
+        snap: "frame",
+        ease: "none",
+        onUpdate: () => render(),
+        duration: 2
+      });
+
+      // 2: Hold slightly (optional, but a tiny pause helps the transition)
+      tl.to(sequence, { frame: frameCount - 1, duration: 0.2 });
+
+      // 3: Animate frames backward from 239 -> 0
+      tl.to(sequence, {
+        frame: 0,
+        snap: "frame",
+        ease: "none",
+        onUpdate: () => render(),
+        duration: 2
+      });
+
+      // 4: Fade the text content AT THE END of the frame sequence
+      tl.to(".hero-content", {
+        opacity: 1,
+        y: 0,
+        ease: "power2.out",
+        duration: 0.5
+      }, "-=0.3"); // Overlap slightly with the end of the reverse animation
     }
-
-    // Master Timeline for ScrollTrigger
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: "#hero-sequence",
-        start: "top top",
-        end: "+=2500", // The hero will stay pinned for 2500px of virtual scrolling
-        scrub: 0.5,
-        pin: true,
-      }
-    });
-
-    // 1: Animate frames from 239 -> 0
-    tl.to(sequence, {
-      frame: 0,
-      snap: "frame",
-      ease: "none",
-      onUpdate: () => render(),
-      duration: 1
-    });
-
-    // 2: Fade the text content AT THE END of the frame sequence
-    // Using a separate timeline tween positioned near the end of the scroll
-    tl.to(".hero-content", {
-      opacity: 1,
-      y: 0,
-      ease: "power2.out",
-      duration: 0.3
-    }, "-=0.3"); // Overlap with the last 30% of the canvas animation
-  }
-</script>
+  </script>
