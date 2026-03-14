@@ -1,43 +1,77 @@
 ---
 ---
 
-<section class="hero-section" id="hero-container">
+<section class="hero-section" id="hero-sequence">
+  <!-- Pinned sequence background -->
+  <div class="canvas-container">
+    <canvas id="hero-lightpass"></canvas>
+  </div>
+
   <div class="container hero-container-inner">
     <hr class="hero-divider" />
     
-    <h1 class="hero-title">Introducing maki.</h1>
-    <h2 class="hero-subtitle">Building Intelligent Infra for Classrooms.</h2>
-    <p class="hero-description">
-      Our system listens in real-world classrooms, processes live lectures and transforms audio into academic intelligence.
-    </p>
+    <div class="hero-content">
+      <h1 class="hero-title">Introducing maki.</h1>
+      <h2 class="hero-subtitle">Building Intelligent Infra for Classrooms.</h2>
+      <p class="hero-description">
+        Our system listens in real-world classrooms, processes live lectures and transforms audio into academic intelligence.
+      </p>
 
-    <div class="hero-actions flex justify-center gap-24">
-      <a href="#request" class="btn-primary">Request Early Access</a>
-      <a href="#demo" class="btn-outline">Watch A Demo</a>
-    </div>
-
-    <!-- Pinned sequence container -->
-    <div class="hero-image-wrapper" id="hero-image-container">
-      <canvas id="hero-lightpass"></canvas>
+      <div class="hero-actions flex justify-center gap-24">
+        <a href="#request" class="btn-primary">Request Early Access</a>
+        <a href="#demo" class="btn-outline">Watch A Demo</a>
+      </div>
     </div>
   </div>
 </section>
 
 <style>
   .hero-section {
-    padding-top: 95px; /* Offset from top */
-    text-align: center;
     position: relative;
-    /* We add extra height here so the user has room to scroll and trigger the animation 
-       without instantly scrolling past the hero. GSAP will scrub based on this. */
-    min-height: 200vh;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--c-white);
+  }
+
+  .canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* behind content */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #hero-lightpass {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .hero-container-inner {
+    position: relative;
+    z-index: 10; /* above canvas */
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    height: 100%;
     padding: 0 40px;
+    padding-top: 60px; /* navbar offset */
+    pointer-events: none; /* Let pointer events pass to canvas if needed */
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    pointer-events: auto; /* Re-enable clicks */
   }
 
   .hero-divider {
@@ -47,13 +81,14 @@
     background-color: var(--c-black);
     border: none;
     margin: 0 auto;
+    position: absolute;
+    top: 95px;
   }
 
   .hero-title {
     font-size: 160px;
     line-height: 1.1; 
     color: var(--c-black);
-    margin-top: 50px;
     margin-bottom: 20px;
     letter-spacing: -0.02em;
     animation: fadeUp 0.8s ease-out forwards;
@@ -85,7 +120,6 @@
   }
 
   .hero-actions {
-    margin-bottom: 60px;
     animation: fadeUp 0.8s ease-out 0.6s forwards;
     transform: translateY(20px);
     opacity: 0;
@@ -101,30 +135,6 @@
     min-width: 142px;
   }
 
-  .hero-image-wrapper {
-    width: 100%;
-    max-width: 1145px;
-    margin: 0 auto;
-    border-radius: 20px;
-    box-shadow: 0px 4px 8px 0px rgba(72, 92, 17, 0.25);
-    overflow: hidden;
-    background: var(--c-black);
-    /* For canvas sizing */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transform: translateY(40px);
-    animation: fadeUp 1s ease-out 0.8s forwards;
-  }
-
-  #hero-lightpass {
-    width: 100%;
-    max-height: 70vh;
-    object-fit: cover;
-    display: block;
-  }
-
   @keyframes fadeUp {
     to {
       opacity: 1;
@@ -136,16 +146,11 @@
     .hero-title {
       font-size: 100px;
     }
-    .hero-section {
-      padding-top: 120px;
-      min-height: 150vh;
-    }
   }
 
   @media (max-width: 768px) {
     .hero-title {
       font-size: 60px;
-      margin-top: 40px;
     }
     .hero-subtitle {
       font-size: 20px;
@@ -187,34 +192,68 @@
     }
 
     images[0].onload = () => {
-      // Setup initial canvas dimensions based on the first image's aspect ratio
-      // to keep it crisp. CSS handles bounding.
-      canvas.width = images[0].width;
-      canvas.height = images[0].height;
-      render();
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
     };
+
+    function resizeCanvas() {
+      // Make canvas size internal match viewport size
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      render();
+    }
 
     function render() {
       if (images[sequence.frame] && context) {
         const img = images[sequence.frame];
+        const canvasRatio = canvas.width / canvas.height;
+        const imgRatio = img.width / img.height;
+
+        let drawWidth, drawHeight, offsetX, offsetY;
+
+        // Cover logic to fill screen
+        if (canvasRatio > imgRatio) {
+          drawWidth = canvas.width;
+          drawHeight = canvas.width / imgRatio;
+          offsetX = 0;
+          offsetY = (canvas.height - drawHeight) / 2;
+        } else {
+          drawWidth = canvas.height * imgRatio;
+          drawHeight = canvas.height;
+          offsetX = (canvas.width - drawWidth) / 2;
+          offsetY = 0;
+        }
+
         context.clearRect(0, 0, canvas.width, canvas.height);
-        context.drawImage(img, 0, 0, canvas.width, canvas.height);
+        context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
       }
     }
 
-    // Scroll trigger to scrub through frames while inside the hero section
+    // Scroll trigger to scrub through frames while pinning the hero section
     gsap.to(sequence, {
       frame: frameCount - 1,
       snap: "frame",
       ease: "none",
       scrollTrigger: {
-        trigger: "#hero-container",
+        trigger: "#hero-sequence",
         start: "top top",
-        end: "bottom bottom",
+        end: "+=2500", // The hero will stay pinned for 2500px of virtual scrolling
         scrub: 0.5,
-        pin: "#hero-image-container", // Pin the image wrapper as they scroll past the space
+        pin: true,
       },
-      onUpdate: () => render() // Explicit arrow function wrapper to avoid losing 'this'
+      onUpdate: () => render() 
+    });
+
+    // Fade out hero text slightly as the sequence scrubs down so the device stands out
+    gsap.to(".hero-content", {
+      opacity: 0,
+      y: -50,
+      scrollTrigger: {
+        trigger: "#hero-sequence",
+        start: "top top",
+        end: "+=1500", // Fades out completely after 1500px
+        scrub: true
+      }
     });
   }
 </script>
