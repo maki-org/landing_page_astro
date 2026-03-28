@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import WhyChooseMaki from '../components/WhyChooseMaki.astro';
+import Team from '../components/Team.astro';
+import Pricing from '../components/Pricing.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Maki.ai - Product Details">
+  <Navbar />
+  
+  <main style="padding-top: 120px;">
+    <!-- padding-top to account for the fixed navbar since we don't have the Hero section here -->
+    <HowItWorks />
+    <WhyChooseMaki />
+    <Team />
+    <Pricing />
+  </main>
+
+  <Footer />
+</Layout>
