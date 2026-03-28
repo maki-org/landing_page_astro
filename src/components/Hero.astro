@@ -7,6 +7,25 @@
     <canvas id="hero-lightpass"></canvas>
   </div>
 
+  <div class="scroll-texts-container">
+    <div class="scroll-text" id="scroll-text-1">
+      <h3 class="scroll-heading">The Classroom just got Smarter !</h3>
+      <p class="scroll-sub">Scroll to see how.</p>
+    </div>
+    <div class="scroll-text" id="scroll-text-2">
+      <h3 class="scroll-heading">Its listening</h3>
+    </div>
+    <div class="scroll-text" id="scroll-text-3">
+      <h3 class="scroll-heading">Every lecture. Every word. Every detail.</h3>
+    </div>
+    <div class="scroll-text" id="scroll-text-4">
+      <h3 class="scroll-heading">Meet Wy. The intelligent infrastructure for modern classrooms<br/>All packed into one device</h3>
+    </div>
+    <div class="scroll-text" id="scroll-text-5">
+      <h3 class="scroll-heading">One room. Infinite retention.</h3>
+    </div>
+  </div>
+
   <div class="container hero-container-inner">
     <hr class="hero-divider" />
     
@@ -51,6 +70,39 @@
     height: 100%;
     object-fit: cover;
     display: block;
+  }
+
+  .scroll-texts-container {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 5;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .scroll-text {
+    position: absolute;
+    text-align: center;
+    opacity: 0; /* Hidden by default */
+    transform: translateY(20px);
+    width: 100%;
+    padding: 0 20px;
+  }
+
+  .scroll-heading {
+    font-size: 64px;
+    font-family: var(--font-serif);
+    color: var(--c-black);
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  .scroll-sub {
+    font-size: 24px;
+    font-family: var(--font-sans);
+    color: var(--c-text-muted);
   }
 
   .hero-container-inner {
@@ -126,6 +178,9 @@
     .hero-title {
       font-size: 100px;
     }
+    .scroll-heading {
+      font-size: 48px;
+    }
   }
 
   @media (max-width: 768px) {
@@ -141,6 +196,12 @@
     .hero-actions {
       flex-direction: column;
       gap: 16px;
+    }
+    .scroll-heading {
+      font-size: 36px;
+    }
+    .scroll-sub {
+      font-size: 18px;
     }
   }
 </style>
@@ -214,39 +275,60 @@
         scrollTrigger: {
           trigger: "#hero-sequence",
           start: "top top",
-          end: "+=4000", // Extended scroll space for the longer sequence
-          scrub: 0.5,
+          end: "+=8000", // A very tall virtual scroll space to fit everything seamlessly
+          scrub: 1, // Smoothing out the scrub so text feels more elegant
           pin: true,
         }
       });
 
-      // 1: Animate frames forward from 0 -> 239
+      // We structure the timeline using relative temporal positions (0 to 10 conceptually).
+      // Total duration of canvas forward is 4 units
       tl.to(sequence, {
         frame: frameCount - 1,
         snap: "frame",
         ease: "none",
         onUpdate: () => render(),
-        duration: 2
-      });
+        duration: 4
+      }, 0);
 
-      // 2: Hold slightly (optional, but a tiny pause helps the transition)
-      tl.to(sequence, { frame: frameCount - 1, duration: 0.2 });
+      // Text 1 appears immediately, fades out
+      tl.to("#scroll-text-1", { opacity: 1, y: 0, duration: 0.5 }, 0);
+      tl.to("#scroll-text-1", { opacity: 0, y: -20, duration: 0.5 }, 1.0);
 
-      // 3: Animate frames backward from 239 -> 0
+      // Text 2
+      tl.to("#scroll-text-2", { opacity: 1, y: 0, duration: 0.5 }, 1.5);
+      tl.to("#scroll-text-2", { opacity: 0, y: -20, duration: 0.5 }, 2.5);
+
+      // Text 3
+      tl.to("#scroll-text-3", { opacity: 1, y: 0, duration: 0.5 }, 3.0);
+      tl.to("#scroll-text-3", { opacity: 0, y: -20, duration: 0.5 }, 4.0);
+
+      // Pause image briefly before going backward
+      tl.to(sequence, { frame: frameCount - 1, duration: 0.5 }, 4);
+
+      // Text 4 during the hold
+      tl.to("#scroll-text-4", { opacity: 1, y: 0, duration: 0.5 }, 4.5);
+      tl.to("#scroll-text-4", { opacity: 0, y: -20, duration: 0.5 }, 5.5);
+
+      // Canvas backwards
       tl.to(sequence, {
         frame: 0,
         snap: "frame",
         ease: "none",
         onUpdate: () => render(),
-        duration: 2
-      });
+        duration: 4 // duration 4 -> from time 4.5 to 8.5
+      }, 4.5);
 
-      // 4: Fade the text content AT THE END of the frame sequence
+      // Text 5 fades in slightly after the reversal begins
+      tl.to("#scroll-text-5", { opacity: 1, y: 0, duration: 0.5 }, 6.5);
+      tl.to("#scroll-text-5", { opacity: 0, y: -20, duration: 0.5 }, 7.5);
+
+      // Finally fade in the main hero content at the very end
       tl.to(".hero-content", {
         opacity: 1,
         y: 0,
         ease: "power2.out",
-        duration: 0.5
-      }, "-=0.3"); // Overlap slightly with the end of the reverse animation
+        duration: 1
+      }, 8.0);
     }
   </script>
