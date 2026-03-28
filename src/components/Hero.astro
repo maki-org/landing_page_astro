@@ -12,14 +12,15 @@
       <h3 class="scroll-heading">The Classroom just got Smarter !</h3>
       <p class="scroll-sub">Scroll to see how.</p>
     </div>
-    <div class="scroll-text" id="scroll-text-2">
-      <h3 class="scroll-heading">Its listening</h3>
+    <div class="side-text left-side" id="scroll-text-2">
+      <h3 class="side-heading">Its listening</h3>
     </div>
-    <div class="scroll-text" id="scroll-text-3">
-      <h3 class="scroll-heading">Every lecture. <span>Every word.</span> Every detail.</h3>
+    <div class="side-text right-side" id="scroll-text-3">
+      <h3 class="side-heading">Every lecture.<br/>Every word.<br/>Every detail.</h3>
     </div>
-    <div class="scroll-text" id="scroll-text-4">
-      <h3 class="scroll-heading">Meet Wy. The intelligent infrastructure for modern classrooms<br/>All packed into one device</h3>
+    <div class="side-text left-side" id="scroll-text-4">
+      <h3 class="side-heading">Meet Wy.</h3>
+      <p class="side-sub">The intelligent infrastructure for modern classrooms.<br/>All packed into one device.</p>
     </div>
     <div class="scroll-text" id="scroll-text-5">
       <h3 class="scroll-heading">One room. Infinite retention.</h3>
@@ -94,8 +95,7 @@
   .scroll-heading {
     font-size: 64px;
     font-family: var(--font-serif);
-    color: #fff;
-    mix-blend-mode: difference;
+    color: var(--c-black);
     line-height: 1.1;
     margin-bottom: 12px;
   }
@@ -103,8 +103,41 @@
   .scroll-sub {
     font-size: 24px;
     font-family: var(--font-sans);
-    color: #fff;
-    mix-blend-mode: difference;
+    color: var(--c-text-muted);
+  }
+
+  .side-text {
+    position: absolute;
+    top: 50%;
+    margin-top: -50px;
+    opacity: 0;
+    transform: translateY(20px);
+    width: 350px;
+  }
+
+  .left-side {
+    left: 8%;
+    text-align: left;
+  }
+
+  .right-side {
+    right: 8%;
+    text-align: right;
+  }
+
+  .side-heading {
+    font-size: 42px;
+    font-family: var(--font-serif);
+    color: var(--c-black);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .side-sub {
+    font-size: 20px;
+    font-family: var(--font-sans);
+    color: var(--c-text-muted);
+    line-height: 1.4;
   }
 
   .hero-container-inner {
@@ -199,11 +232,20 @@
       flex-direction: column;
       gap: 16px;
     }
-    .scroll-heading {
+    .scroll-heading, .side-heading {
       font-size: 36px;
     }
-    .scroll-sub {
+    .scroll-sub, .side-sub {
       font-size: 18px;
+    }
+    .side-text {
+      width: 100%;
+      left: 0 !important;
+      right: 0 !important;
+      text-align: center !important;
+      padding: 0 20px;
+      top: 15%;
+      margin-top: 0;
     }
   }
 </style>
