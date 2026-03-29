@@ -13,7 +13,8 @@ const team = [
   {
     name: "Aditya Manoj",
     role: "Head Of Design",
-    bio: "Aditya believes good design is the key to every great product in the market. He carries forward this passion to build our product and make it as intuitive as possible."
+    bio: "Aditya believes good design is the key to every great product in the market. He carries forward this passion to build our product and make it as intuitive as possible.",
+    image: "/images/aditya.jpeg"
   }
 ];
 ---
@@ -30,7 +31,11 @@ const team = [
     <div class="team-grid">
       {team.map((member) => (
         <div class="team-card">
-          <div class="team-image-placeholder"></div>
+          {member.image ? (
+            <img src={member.image} alt={member.name} class="team-image-placeholder" style="object-fit: cover;" />
+          ) : (
+            <div class="team-image-placeholder"></div>
+          )}
           <div class="team-info">
             <h3 class="team-name">{member.name}</h3>
             <p class="team-role">{member.role}</p>
