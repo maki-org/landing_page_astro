@@ -1,9 +1,23 @@
 ---
 interface Props {
 	title: string;
+	description?: string;
+	image?: string;
 }
 
-const { title } = Astro.props;
+const { 
+	title, 
+	description = "Wy.ai - Intelligent hardware capturing every lecture into detailed, smarter study notes. Building Intelligent Infra for Classrooms.", 
+	image = "/images/whatsapp_image_2026-02-10_at_17.45.57_2.png" 
+} = Astro.props;
+
+// Construct full URL for canonical/OG
+const siteUrl = Astro.site || new URL('https://www.wynautlabs.com');
+const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+
+// Image logic for OG/Twitter
+const socialImageURL = new URL(image, siteUrl);
+
 import '../styles/global.css';
 ---
 
@@ -11,14 +25,34 @@ import '../styles/global.css';
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content="Wy.ai - Building Intelligent Infra for Classrooms" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+		<!-- Primary Meta Tags -->
+		<title>{title}</title>
+		<meta name="title" content={title} />
+		<meta name="description" content={description} />
+		<meta name="theme-color" content="#b2d430" /> <!-- Adjust theme color if needed -->
+		<link rel="canonical" href={canonicalURL} />
+		
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={socialImageURL} />
+		
+		<!-- Twitter -->
+		<meta property="twitter:card" content="summary_large_image" />
+		<meta property="twitter:url" content={canonicalURL} />
+		<meta property="twitter:title" content={title} />
+		<meta property="twitter:description" content={description} />
+		<meta property="twitter:image" content={socialImageURL} />
+
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Syne:wght@700&display=swap" rel="stylesheet">
 		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
 	</head>
 	<body>
 		<slot />
