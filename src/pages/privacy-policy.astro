@@ -1,0 +1,56 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Privacy Policy - Wy">
+  <Navbar />
+  
+  <main class="privacy-container">
+    <div class="content">
+      <h1>PRIVACY POLICY</h1>
+      <p>
+        Wynaut Labs is committed to protecting the privacy and security of students, teachers, and institutions using our platform. Our classroom devices process lecture audio solely for the purpose of generating study materials, notes, tasks, and academic insights within the Wy ecosystem. We collect only the minimum data necessary to provide and improve our services. Audio recordings and derived content are securely stored, encrypted in transit and at rest, and accessible only to authorized users. We do not sell personal data to third parties. Any data shared with service providers is strictly for operational purposes and subject to confidentiality obligations. Users and institutions retain ownership of their academic content, and we implement industry-standard safeguards to ensure responsible data handling in compliance with applicable laws and educational privacy standards.
+      </p>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .privacy-container {
+    padding: 180px 40px 100px;
+    min-height: 80vh;
+    background-color: var(--c-bg); /* Use base background if applicable, or fallback to sensible default */
+    display: flex;
+    justify-content: center;
+  }
+
+  .content {
+    max-width: 800px;
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 48px;
+    color: var(--c-black);
+    margin-bottom: 32px;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--c-black); /* Assuming body text color */
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 36px;
+    }
+    .privacy-container {
+      padding-top: 140px;
+    }
+  }
+</style>
