@@ -52,6 +52,7 @@
     position: relative;
     width: 100%;
     height: 100vh;
+    height: 100svh;
     overflow: hidden;
     background-color: var(--c-white);
   }
@@ -225,8 +226,28 @@
   }
 
   @media (max-width: 768px) {
+    .hero-section {
+      height: auto;
+      min-height: 100svh;
+      padding-bottom: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 60px;
+    }
+    .canvas-container,
+    .scroll-texts-container,
+    .hero-divider {
+      display: none !important;
+    }
+    .hero-content {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+      position: relative;
+      z-index: 10;
+    }
     .hero-title {
-      font-size: 60px;
+      font-size: 50px;
     }
     .hero-subtitle {
       font-size: 20px;
@@ -237,12 +258,24 @@
     .hero-actions {
       flex-direction: column;
       gap: 16px;
+      width: 100%;
+    }
+    .hero-actions a {
+      width: 100%;
     }
     .scroll-heading, .side-heading {
-      font-size: 36px;
+      font-size: 32px;
+      text-shadow: 0 0 20px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.8);
+      color: var(--c-black);
     }
     .scroll-sub, .side-sub {
       font-size: 18px;
+      text-shadow: 0 0 20px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.8);
+      color: var(--c-black);
+    }
+    .scroll-text {
+      top: 15%;
+      margin-top: 0;
     }
     .side-text {
       width: 100%;
@@ -250,7 +283,7 @@
       right: 0 !important;
       text-align: center !important;
       padding: 0 20px;
-      top: 12%;
+      top: 15%;
       margin-top: 0;
     }
     #scroll-text-4-sub {
@@ -258,7 +291,13 @@
       bottom: 12% !important;
     }
     #scroll-text-5 {
-      margin-top: 150px !important;
+      top: auto !important;
+      bottom: 15% !important;
+      margin-top: 0 !important;
+    }
+    .hero-container-inner {
+      padding: 0 20px;
+      padding-top: 0;
     }
   }
 </style>
@@ -269,125 +308,93 @@
 
     gsap.registerPlugin(ScrollTrigger);
 
-    const canvas = document.getElementById("hero-lightpass") as HTMLCanvasElement;
-    
-    if (canvas) {
-      const context = canvas.getContext("2d");
+    let mm = gsap.matchMedia();
+
+    mm.add("(min-width: 769px)", () => {
+      const canvas = document.getElementById("hero-lightpass") as HTMLCanvasElement;
+      let resizeCanvas: () => void;
       
-      const frameCount = 240;
-      const currentFrame = (index: number) => {
-        return `/frames/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
-      };
+      if (canvas) {
+        const context = canvas.getContext("2d");
+        
+        const frameCount = 240;
+        const currentFrame = (index: number) => {
+          return `/frames/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
+        };
 
-      const images: HTMLImageElement[] = [];
-      const sequence = { frame: 0 }; // Start at the FIRST frame
+        const images: HTMLImageElement[] = [];
+        const sequence = { frame: 0 }; 
 
-      // Preload images
-      for (let i = 0; i < frameCount; i++) {
-          const img = new Image();
-          img.src = currentFrame(i);
-          images.push(img);
-      }
+        for (let i = 0; i < frameCount; i++) {
+            const img = new Image();
+            img.src = currentFrame(i);
+            images.push(img);
+        }
 
-      images[0].onload = () => {
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-      };
+        resizeCanvas = () => {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          render();
+        };
 
-      function resizeCanvas() {
-        // Make canvas size internal match viewport size
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        render();
-      }
+        images[0].onload = () => {
+          resizeCanvas();
+          window.addEventListener('resize', resizeCanvas);
+        };
 
-      function render() {
-        if (images[sequence.frame] && context) {
-          const img = images[sequence.frame];
-          const canvasRatio = canvas.width / canvas.height;
-          const imgRatio = img.width / img.height;
+        function render() {
+          if (images[sequence.frame] && context) {
+            const img = images[sequence.frame];
+            const canvasRatio = canvas.width / canvas.height;
+            const imgRatio = img.width / img.height;
 
-          let drawWidth, drawHeight, offsetX, offsetY;
+            let drawWidth, drawHeight, offsetX, offsetY;
 
-          // Cover logic to fill screen
-          if (canvasRatio > imgRatio) {
-            drawWidth = canvas.width;
-            drawHeight = canvas.width / imgRatio;
-            offsetX = 0;
-            offsetY = (canvas.height - drawHeight) / 2;
-          } else {
-            drawWidth = canvas.height * imgRatio;
-            drawHeight = canvas.height;
+            if (canvasRatio > imgRatio) {
+              drawWidth = canvas.width;
+              drawHeight = canvas.width / imgRatio;
+            } else {
+              drawWidth = canvas.height * imgRatio;
+              drawHeight = canvas.height;
+            }
+            
             offsetX = (canvas.width - drawWidth) / 2;
-            offsetY = 0;
+            offsetY = (canvas.height - drawHeight) / 2;
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
           }
-
-          context.clearRect(0, 0, canvas.width, canvas.height);
-          context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
         }
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: "#hero-sequence",
+            start: "top top",
+            end: "+=8000", 
+            scrub: 1, 
+            pin: true,
+          }
+        });
+
+        tl.to(sequence, { frame: frameCount - 1, snap: "frame", ease: "none", onUpdate: () => render(), duration: 4 }, 0);
+        tl.to("#scroll-text-1", { opacity: 1, y: 0, duration: 0.5 }, 0);
+        tl.to("#scroll-text-1", { opacity: 0, y: -20, duration: 0.5 }, 1.0);
+        tl.to("#scroll-text-2", { opacity: 1, y: 0, duration: 0.5 }, 1.5);
+        tl.to("#scroll-text-2", { opacity: 0, y: -20, duration: 0.5 }, 2.5);
+        tl.to("#scroll-text-3", { opacity: 1, y: 0, duration: 0.5 }, 3.0);
+        tl.to("#scroll-text-3", { opacity: 0, y: -20, duration: 0.5 }, 4.0);
+        tl.to(sequence, { frame: frameCount - 1, duration: 0.5 }, 4);
+        tl.to("#scroll-text-4", { opacity: 1, y: 0, duration: 0.5 }, 4.5);
+        tl.to("#scroll-text-4-sub", { opacity: 1, y: 0, duration: 0.5 }, 4.5);
+        tl.to("#scroll-text-4", { opacity: 0, y: -20, duration: 0.5 }, 5.5);
+        tl.to("#scroll-text-4-sub", { opacity: 0, y: -20, duration: 0.5 }, 5.5);
+        tl.to(sequence, { frame: 0, snap: "frame", ease: "none", onUpdate: () => render(), duration: 4 }, 4.5);
+        tl.to("#scroll-text-5", { opacity: 1, y: 0, duration: 0.5 }, 6.5);
+        tl.to("#scroll-text-5", { opacity: 0, y: -20, duration: 0.5 }, 7.5);
+        tl.to(".hero-content", { opacity: 1, y: 0, ease: "power2.out", duration: 1 }, 8.0);
       }
-
-      // Master Timeline for ScrollTrigger
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: "#hero-sequence",
-          start: "top top",
-          end: "+=8000", // A very tall virtual scroll space to fit everything seamlessly
-          scrub: 1, // Smoothing out the scrub so text feels more elegant
-          pin: true,
-        }
-      });
-
-      // We structure the timeline using relative temporal positions (0 to 10 conceptually).
-      // Total duration of canvas forward is 4 units
-      tl.to(sequence, {
-        frame: frameCount - 1,
-        snap: "frame",
-        ease: "none",
-        onUpdate: () => render(),
-        duration: 4
-      }, 0);
-
-      // Text 1 appears immediately, fades out
-      tl.to("#scroll-text-1", { opacity: 1, y: 0, duration: 0.5 }, 0);
-      tl.to("#scroll-text-1", { opacity: 0, y: -20, duration: 0.5 }, 1.0);
-
-      // Text 2
-      tl.to("#scroll-text-2", { opacity: 1, y: 0, duration: 0.5 }, 1.5);
-      tl.to("#scroll-text-2", { opacity: 0, y: -20, duration: 0.5 }, 2.5);
-
-      // Text 3
-      tl.to("#scroll-text-3", { opacity: 1, y: 0, duration: 0.5 }, 3.0);
-      tl.to("#scroll-text-3", { opacity: 0, y: -20, duration: 0.5 }, 4.0);
-
-      // Pause image briefly before going backward
-      tl.to(sequence, { frame: frameCount - 1, duration: 0.5 }, 4);
-
-      // Text 4 during the hold
-      tl.to("#scroll-text-4", { opacity: 1, y: 0, duration: 0.5 }, 4.5);
-      tl.to("#scroll-text-4-sub", { opacity: 1, y: 0, duration: 0.5 }, 4.5);
-      tl.to("#scroll-text-4", { opacity: 0, y: -20, duration: 0.5 }, 5.5);
-      tl.to("#scroll-text-4-sub", { opacity: 0, y: -20, duration: 0.5 }, 5.5);
-
-      // Canvas backwards
-      tl.to(sequence, {
-        frame: 0,
-        snap: "frame",
-        ease: "none",
-        onUpdate: () => render(),
-        duration: 4 // duration 4 -> from time 4.5 to 8.5
-      }, 4.5);
-
-      // Text 5 fades in slightly after the reversal begins
-      tl.to("#scroll-text-5", { opacity: 1, y: 0, duration: 0.5 }, 6.5);
-      tl.to("#scroll-text-5", { opacity: 0, y: -20, duration: 0.5 }, 7.5);
-
-      // Finally fade in the main hero content at the very end
-      tl.to(".hero-content", {
-        opacity: 1,
-        y: 0,
-        ease: "power2.out",
-        duration: 1
-      }, 8.0);
-    }
+      return () => {
+        if (resizeCanvas) window.removeEventListener('resize', resizeCanvas);
+      };
+    });
   </script>

@@ -94,6 +94,15 @@ import { Image } from 'astro:assets';
       display: none; /* simple responsive hide for now */
     }
   }
+
+  @media (max-width: 768px) {
+    .navbar-container {
+      padding: 0 20px;
+    }
+    .logo {
+      gap: 8px;
+    }
+  }
 </style>
 
 <script>

@@ -31,6 +31,8 @@ html {
   color: var(--c-text-main);
   background-color: var(--c-white);
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 body {
