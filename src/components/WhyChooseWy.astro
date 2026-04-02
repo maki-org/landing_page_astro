@@ -3,18 +3,18 @@ const features = [
   {
     number: "01",
     title: "Captures Everything",
-    text: "No word missed. Crystal-clear capture, even in noisy or large rooms."
+    text: "No word missed. Crystal-clear capture, even in noisy or large rooms.",
   },
   {
     number: "02",
     title: "Learns your domain",
-    text: "Improves with every use, learning and adapting to your vocabulary and speaking style."
+    text: "Improves with every use, learning and adapting to your vocabulary and speaking style.",
   },
   {
     number: "03",
     title: "Works anywhere",
-    text: "No setup, no apps, no configuration — simply place the device and it’s ready to go."
-  }
+    text: "No setup, no apps, no configuration — simply place the device and it’s ready to go.",
+  },
 ];
 ---
 
@@ -23,24 +23,32 @@ const features = [
     <div class="header-wrapper">
       <h2 class="section-title">Why Choose Wy?</h2>
       <p class="section-subtitle">
-        You need a solution that keeps up. That’s why we developed Wy. It captures every lecture and converts it into detailed notes so students never miss key points.
+        You need a solution that keeps up. That’s why we developed Wy. It
+        captures every lecture and converts it into detailed notes so students
+        never miss key points.
       </p>
     </div>
 
     <div class="features-grid">
-      {features.map((feat) => (
-        <div class="feature-card">
-          <div class="feature-number">{feat.number}</div>
-          <div class="feature-content">
-            <h3 class="feature-title">{feat.title}</h3>
-            <p class="feature-text">{feat.text}</p>
+      {
+        features.map((feat) => (
+          <div class="feature-card">
+            <div class="feature-number">{feat.number}</div>
+            <div class="feature-content">
+              <h3 class="feature-title">{feat.title}</h3>
+              <p class="feature-text">{feat.text}</p>
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      }
     </div>
 
     <div class="section-image-wrapper">
-      <img src="/images/whatsapp_image_2026-02-10_at_17.45.57_2.png" alt="Wy App Details" class="section-image" />
+      <img
+        src="/images/Image_in_site.png"
+        alt="Wy App Details"
+        class="section-image"
+      />
     </div>
   </div>
 </section>

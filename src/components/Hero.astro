@@ -226,26 +226,6 @@
   }
 
   @media (max-width: 768px) {
-    .hero-section {
-      height: auto;
-      min-height: 100svh;
-      padding-bottom: 60px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding-top: 60px;
-    }
-    .canvas-container,
-    .scroll-texts-container,
-    .hero-divider {
-      display: none !important;
-    }
-    .hero-content {
-      opacity: 1 !important;
-      transform: translateY(0) !important;
-      position: relative;
-      z-index: 10;
-    }
     .hero-title {
       font-size: 50px;
     }
@@ -297,7 +277,7 @@
     }
     .hero-container-inner {
       padding: 0 20px;
-      padding-top: 0;
+      padding-top: 60px;
     }
   }
 </style>
@@ -308,93 +288,100 @@
 
     gsap.registerPlugin(ScrollTrigger);
 
-    let mm = gsap.matchMedia();
-
-    mm.add("(min-width: 769px)", () => {
+    function initHeroAnimation(frameCount: number, frameDir: string) {
       const canvas = document.getElementById("hero-lightpass") as HTMLCanvasElement;
       let resizeCanvas: () => void;
       
-      if (canvas) {
-        const context = canvas.getContext("2d");
-        
-        const frameCount = 240;
-        const currentFrame = (index: number) => {
-          return `/frames/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
-        };
+      if (!canvas) return () => {};
+      const context = canvas.getContext("2d");
+      
+      const currentFrame = (index: number) => {
+        return `/${frameDir}/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
+      };
 
-        const images: HTMLImageElement[] = [];
-        const sequence = { frame: 0 }; 
+      const images: HTMLImageElement[] = [];
+      const sequence = { frame: 0 }; 
 
-        for (let i = 0; i < frameCount; i++) {
-            const img = new Image();
-            img.src = currentFrame(i);
-            images.push(img);
-        }
-
-        resizeCanvas = () => {
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
-          render();
-        };
-
-        images[0].onload = () => {
-          resizeCanvas();
-          window.addEventListener('resize', resizeCanvas);
-        };
-
-        function render() {
-          if (images[sequence.frame] && context) {
-            const img = images[sequence.frame];
-            const canvasRatio = canvas.width / canvas.height;
-            const imgRatio = img.width / img.height;
-
-            let drawWidth, drawHeight, offsetX, offsetY;
-
-            if (canvasRatio > imgRatio) {
-              drawWidth = canvas.width;
-              drawHeight = canvas.width / imgRatio;
-            } else {
-              drawWidth = canvas.height * imgRatio;
-              drawHeight = canvas.height;
-            }
-            
-            offsetX = (canvas.width - drawWidth) / 2;
-            offsetY = (canvas.height - drawHeight) / 2;
-
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-          }
-        }
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: "#hero-sequence",
-            start: "top top",
-            end: "+=8000", 
-            scrub: 1, 
-            pin: true,
-          }
-        });
-
-        tl.to(sequence, { frame: frameCount - 1, snap: "frame", ease: "none", onUpdate: () => render(), duration: 4 }, 0);
-        tl.to("#scroll-text-1", { opacity: 1, y: 0, duration: 0.5 }, 0);
-        tl.to("#scroll-text-1", { opacity: 0, y: -20, duration: 0.5 }, 1.0);
-        tl.to("#scroll-text-2", { opacity: 1, y: 0, duration: 0.5 }, 1.5);
-        tl.to("#scroll-text-2", { opacity: 0, y: -20, duration: 0.5 }, 2.5);
-        tl.to("#scroll-text-3", { opacity: 1, y: 0, duration: 0.5 }, 3.0);
-        tl.to("#scroll-text-3", { opacity: 0, y: -20, duration: 0.5 }, 4.0);
-        tl.to(sequence, { frame: frameCount - 1, duration: 0.5 }, 4);
-        tl.to("#scroll-text-4", { opacity: 1, y: 0, duration: 0.5 }, 4.5);
-        tl.to("#scroll-text-4-sub", { opacity: 1, y: 0, duration: 0.5 }, 4.5);
-        tl.to("#scroll-text-4", { opacity: 0, y: -20, duration: 0.5 }, 5.5);
-        tl.to("#scroll-text-4-sub", { opacity: 0, y: -20, duration: 0.5 }, 5.5);
-        tl.to(sequence, { frame: 0, snap: "frame", ease: "none", onUpdate: () => render(), duration: 4 }, 4.5);
-        tl.to("#scroll-text-5", { opacity: 1, y: 0, duration: 0.5 }, 6.5);
-        tl.to("#scroll-text-5", { opacity: 0, y: -20, duration: 0.5 }, 7.5);
-        tl.to(".hero-content", { opacity: 1, y: 0, ease: "power2.out", duration: 1 }, 8.0);
+      for (let i = 0; i < frameCount; i++) {
+          const img = new Image();
+          img.src = currentFrame(i);
+          images.push(img);
       }
+
+      resizeCanvas = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        render();
+      };
+
+      images[0].onload = () => {
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+      };
+
+      function render() {
+        if (images[sequence.frame] && context) {
+          const img = images[sequence.frame];
+          const canvasRatio = canvas.width / canvas.height;
+          const imgRatio = img.width / img.height;
+
+          let drawWidth, drawHeight, offsetX, offsetY;
+
+          if (canvasRatio > imgRatio) {
+            drawWidth = canvas.width;
+            drawHeight = canvas.width / imgRatio;
+          } else {
+            drawWidth = canvas.height * imgRatio;
+            drawHeight = canvas.height;
+          }
+          
+          offsetX = (canvas.width - drawWidth) / 2;
+          offsetY = (canvas.height - drawHeight) / 2;
+
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+        }
+      }
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#hero-sequence",
+          start: "top top",
+          end: "+=8000", 
+          scrub: 1, 
+          pin: true,
+        }
+      });
+
+      tl.to(sequence, { frame: frameCount - 1, snap: "frame", ease: "none", onUpdate: () => render(), duration: 4 }, 0);
+      tl.to("#scroll-text-1", { opacity: 1, y: 0, duration: 0.5 }, 0);
+      tl.to("#scroll-text-1", { opacity: 0, y: -20, duration: 0.5 }, 1.0);
+      tl.to("#scroll-text-2", { opacity: 1, y: 0, duration: 0.5 }, 1.5);
+      tl.to("#scroll-text-2", { opacity: 0, y: -20, duration: 0.5 }, 2.5);
+      tl.to("#scroll-text-3", { opacity: 1, y: 0, duration: 0.5 }, 3.0);
+      tl.to("#scroll-text-3", { opacity: 0, y: -20, duration: 0.5 }, 4.0);
+      tl.to(sequence, { frame: frameCount - 1, duration: 0.5 }, 4);
+      tl.to("#scroll-text-4", { opacity: 1, y: 0, duration: 0.5 }, 4.5);
+      tl.to("#scroll-text-4-sub", { opacity: 1, y: 0, duration: 0.5 }, 4.5);
+      tl.to("#scroll-text-4", { opacity: 0, y: -20, duration: 0.5 }, 5.5);
+      tl.to("#scroll-text-4-sub", { opacity: 0, y: -20, duration: 0.5 }, 5.5);
+      tl.to(sequence, { frame: 0, snap: "frame", ease: "none", onUpdate: () => render(), duration: 4 }, 4.5);
+      tl.to("#scroll-text-5", { opacity: 1, y: 0, duration: 0.5 }, 6.5);
+      tl.to("#scroll-text-5", { opacity: 0, y: -20, duration: 0.5 }, 7.5);
+      tl.to(".hero-content", { opacity: 1, y: 0, ease: "power2.out", duration: 1 }, 8.0);
+      
       return () => {
         if (resizeCanvas) window.removeEventListener('resize', resizeCanvas);
+        tl.kill();
       };
+    }
+
+    let mm = gsap.matchMedia();
+
+    mm.add("(min-width: 769px)", () => {
+      return initHeroAnimation(265, "desktop_frames");
+    });
+    mm.add("(max-width: 768px)", () => {
+      return initHeroAnimation(300, "mobile_frames");
     });
   </script>
