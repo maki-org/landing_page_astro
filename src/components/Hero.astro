@@ -44,10 +44,10 @@
     <div class="hero-content">
       <h1 class="hero-title">Introducing Wy.</h1>
       <h2 class="hero-subtitle">Building Intelligent Infra for Classrooms.</h2>
-      <p class="hero-description">
+      <!-- <p class="hero-description">
         Our system listens in real-world classrooms, processes live lectures and
         transforms audio into academic intelligence.
-      </p>
+      </p> -->
 
       <div class="hero-actions flex justify-center gap-24">
         <a href="#request" class="btn-primary">Request Early Access</a>
@@ -62,7 +62,8 @@
     position: relative;
     width: 100%;
     height: 100vh; /* fallback */
-    height: 100dvh; /* dynamic viewport height - adapts to iOS Safari/Chrome toolbar */
+    height: 100svh; /* stable viewport height - doesn't jump with toolbar */
+    height: var(--app-height, 100svh); /* JS-set fallback for Chrome iOS */
     overflow: hidden;
     background-color: var(--c-white);
   }
@@ -304,6 +305,14 @@
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+  // Set --app-height using JS for Chrome iOS compatibility
+  // window.innerHeight gives the actual visible viewport on all iOS browsers
+  function setAppHeight() {
+    document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+  }
+  setAppHeight();
+  window.addEventListener('resize', setAppHeight);
+
   gsap.registerPlugin(ScrollTrigger);
 
   // Fix iOS Safari/Chrome: prevent ScrollTrigger from recalculating on toolbar resize
@@ -313,19 +322,22 @@
 
   // Force-hide all overlay elements immediately before ScrollTrigger initializes
   // This prevents the flash of all texts showing on load/reload
-  gsap.set([
-    "#scroll-text-1",
-    "#scroll-text-2",
-    "#scroll-text-3",
-    "#scroll-text-4",
-    "#scroll-text-4-sub",
-    "#scroll-text-5",
-    ".hero-content"
-  ], { autoAlpha: 0, y: 20 });
+  gsap.set(
+    [
+      "#scroll-text-1",
+      "#scroll-text-2",
+      "#scroll-text-3",
+      "#scroll-text-4",
+      "#scroll-text-4-sub",
+      "#scroll-text-5",
+      ".hero-content",
+    ],
+    { autoAlpha: 0, y: 20 },
+  );
 
   // Scroll to top on page load to prevent browser restoring mid-scroll position
-  if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'manual';
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
   }
   window.scrollTo(0, 0);
 
