@@ -51,8 +51,8 @@
   .hero-section {
     position: relative;
     width: 100%;
-    height: 100vh;
-    height: 100svh;
+    height: 100vh; /* fallback */
+    height: 100dvh; /* dynamic viewport height - adapts to iOS Safari/Chrome toolbar */
     overflow: hidden;
     background-color: var(--c-white);
   }
@@ -288,6 +288,28 @@
 
     gsap.registerPlugin(ScrollTrigger);
 
+    // Fix iOS Safari/Chrome: prevent ScrollTrigger from recalculating on toolbar resize
+    ScrollTrigger.config({
+      ignoreMobileResize: true
+    });
+
+    // Fix iOS Safari/Chrome: normalize scroll to reduce pin jitter from toolbar
+    ScrollTrigger.normalizeScroll(true);
+
+    function getViewportSize() {
+      // Use visualViewport for accurate dimensions on iOS (accounts for toolbar)
+      if (window.visualViewport) {
+        return {
+          width: window.visualViewport.width,
+          height: window.visualViewport.height
+        };
+      }
+      return {
+        width: window.innerWidth,
+        height: window.innerHeight
+      };
+    }
+
     function initHeroAnimation(frameCount: number, frameDir: string) {
       const canvas = document.getElementById("hero-lightpass") as HTMLCanvasElement;
       let resizeCanvas: () => void;
@@ -309,14 +331,19 @@
       }
 
       resizeCanvas = () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        const vp = getViewportSize();
+        canvas.width = vp.width;
+        canvas.height = vp.height;
         render();
       };
 
       images[0].onload = () => {
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
+        // Also listen to visualViewport resize for iOS toolbar changes
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener('resize', resizeCanvas);
+        }
       };
 
       function render() {
@@ -371,7 +398,12 @@
       tl.to(".hero-content", { opacity: 1, y: 0, ease: "power2.out", duration: 1 }, 8.0);
       
       return () => {
-        if (resizeCanvas) window.removeEventListener('resize', resizeCanvas);
+        if (resizeCanvas) {
+          window.removeEventListener('resize', resizeCanvas);
+          if (window.visualViewport) {
+            window.visualViewport.removeEventListener('resize', resizeCanvas);
+          }
+        }
         tl.kill();
       };
     }

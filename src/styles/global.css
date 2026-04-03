@@ -36,7 +36,8 @@ html {
 }
 
 body {
-  min-height: 100vh;
+  min-height: 100vh; /* fallback */
+  min-height: 100dvh; /* iOS Safari/Chrome dynamic viewport */
   margin: 0;
   padding: 0;
   overflow-x: hidden;
