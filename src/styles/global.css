@@ -2,15 +2,18 @@
   /* Colors */
   --c-white: #ffffff;
   --c-black: #000000;
-  
-  --c-primary: #485c11; /* Green */
-  --c-secondary: #a1b777; /* Light Green */
-  --c-border-hero: #8e9b77; /* Border green */
-  
+
+  --c-primary: #485c11;
+  /* Green */
+  --c-secondary: #a1b777;
+  /* Light Green */
+  --c-border-hero: #8e9b77;
+  /* Border green */
+
   --c-text-main: #000000;
   --c-text-muted: #6f6f6f;
   --c-text-numbers: #929292;
-  
+
   --c-divider: #e9e9e9;
 
   /* Typography */
@@ -20,7 +23,9 @@
 }
 
 /* Reset */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -33,34 +38,58 @@ html {
   scroll-behavior: smooth;
   overflow-x: hidden;
   width: 100%;
+  height: -webkit-fill-available;
 }
 
 body {
-  min-height: 100vh; /* fallback */
-  min-height: 100svh; /* stable viewport height for iOS */
+  min-height: 100vh;
+  min-height: 100svh;
+  /* stable viewport height for iOS */
+  min-height: -webkit-fill-available;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  background-color: var(--c-white);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
-img, picture, video, canvas, svg {
+img,
+picture,
+video,
+canvas,
+svg {
   display: block;
   max-width: 100%;
 }
 
-input, button, textarea, select {
+input,
+button,
+textarea,
+select {
   font: inherit;
 }
 
-p, h1, h2, h3, h4, h5, h6 {
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   overflow-wrap: break-word;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-serif);
-  font-weight: 400; /* Let specific classes define weight, mostly Crimson is normal in headers here except perhaps bolder */
+  font-weight: 400;
+  /* Let specific classes define weight, mostly Crimson is normal in headers here except perhaps bolder */
 }
 
 a {
@@ -71,7 +100,8 @@ a {
 /* Utilities */
 .container {
   width: 100%;
-  max-width: 1280px; /* from Figma Desktop Frame width */
+  max-width: 1280px;
+  /* from Figma Desktop Frame width */
   margin: 0 auto;
   position: relative;
 }
@@ -120,18 +150,56 @@ a {
 }
 
 /* Layout Utilites */
-.flex { display: flex; }
-.flex-col { display: flex; flex-direction: column; }
-.justify-between { justify-content: space-between; }
-.justify-center { justify-content: center; }
-.items-center { align-items: center; }
-.items-start { align-items: flex-start; }
-.gap-8 { gap: 8px; }
-.gap-16 { gap: 16px; }
-.gap-24 { gap: 24px; }
-.gap-32 { gap: 32px; }
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
+.gap-8 {
+  gap: 8px;
+}
+
+.gap-16 {
+  gap: 16px;
+}
+
+.gap-24 {
+  gap: 24px;
+}
+
+.gap-32 {
+  gap: 32px;
+}
 
 /* Text Utilities */
-.text-center { text-align: center; }
-.text-muted { color: var(--c-text-muted); }
-.text-primary { color: var(--c-primary); }
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: var(--c-text-muted);
+}
+
+.text-primary {
+  color: var(--c-primary);
+}
