@@ -1,4 +1,5 @@
 ---
+
 ---
 
 <section class="hero-section" id="hero-sequence">
@@ -16,13 +17,21 @@
       <h3 class="side-heading">Its listening</h3>
     </div>
     <div class="side-text right-side" id="scroll-text-3">
-      <h3 class="side-heading">Every lecture.<br/>Every word.<br/>Every detail.</h3>
+      <h3 class="side-heading">
+        Every lecture.<br />Every word.<br />Every detail.
+      </h3>
     </div>
     <div class="side-text left-side" id="scroll-text-4">
-      <h3 class="side-heading">Meet Wy</h3>
+      <h3 class="side-heading"></h3>
     </div>
     <div class="side-text right-side" id="scroll-text-4-sub">
-      <p class="side-sub" style="font-weight: 700; color: var(--c-black); font-size: 24px;">The intelligent infrastructure for modern classrooms.<br/>All packed into one device.</p>
+      <p
+        class="side-sub"
+        style="font-weight: 700; color: var(--c-black); font-size: 24px;"
+      >
+        The intelligent infrastructure for modern classrooms.<br />All packed
+        into one device.
+      </p>
     </div>
     <div class="scroll-text" id="scroll-text-5">
       <h3 class="scroll-heading">One room. Infinite retention.</h3>
@@ -31,12 +40,13 @@
 
   <div class="container hero-container-inner">
     <hr class="hero-divider" />
-    
+
     <div class="hero-content">
       <h1 class="hero-title">Introducing Wy.</h1>
       <h2 class="hero-subtitle">Building Intelligent Infra for Classrooms.</h2>
       <p class="hero-description">
-        Our system listens in real-world classrooms, processes live lectures and transforms audio into academic intelligence.
+        Our system listens in real-world classrooms, processes live lectures and
+        transforms audio into academic intelligence.
       </p>
 
       <div class="hero-actions flex justify-center gap-24">
@@ -78,7 +88,10 @@
 
   .scroll-texts-container {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 5;
     pointer-events: none;
     display: flex;
@@ -186,7 +199,7 @@
 
   .hero-title {
     font-size: 160px;
-    line-height: 1.1; 
+    line-height: 1.1;
     color: var(--c-black);
     margin-bottom: 20px;
     letter-spacing: -0.02em;
@@ -246,14 +259,20 @@
     .hero-actions a {
       width: 100%;
     }
-    .scroll-heading, .side-heading {
+    .scroll-heading,
+    .side-heading {
       font-size: 32px;
-      text-shadow: 0 0 20px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.8);
+      text-shadow:
+        0 0 20px rgba(255, 255, 255, 1),
+        0 0 10px rgba(255, 255, 255, 0.8);
       color: var(--c-black);
     }
-    .scroll-sub, .side-sub {
+    .scroll-sub,
+    .side-sub {
       font-size: 18px;
-      text-shadow: 0 0 20px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.8);
+      text-shadow:
+        0 0 20px rgba(255, 255, 255, 1),
+        0 0 10px rgba(255, 255, 255, 0.8);
       color: var(--c-black);
     }
     .scroll-text,
@@ -281,138 +300,179 @@
   }
 </style>
 
-  <script>
-    import { gsap } from 'gsap';
-    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-    gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger);
 
-    // Fix iOS Safari/Chrome: prevent ScrollTrigger from recalculating on toolbar resize
-    ScrollTrigger.config({
-      ignoreMobileResize: true
-    });
+  // Fix iOS Safari/Chrome: prevent ScrollTrigger from recalculating on toolbar resize
+  ScrollTrigger.config({
+    ignoreMobileResize: true,
+  });
 
-    // Fix iOS Safari/Chrome: normalize scroll to reduce pin jitter from toolbar
-    ScrollTrigger.normalizeScroll(true);
+  // Force-hide all overlay elements immediately before ScrollTrigger initializes
+  // This prevents the flash of all texts showing on load/reload
+  gsap.set([
+    "#scroll-text-1",
+    "#scroll-text-2",
+    "#scroll-text-3",
+    "#scroll-text-4",
+    "#scroll-text-4-sub",
+    "#scroll-text-5",
+    ".hero-content"
+  ], { autoAlpha: 0, y: 20 });
 
-    function getViewportSize() {
-      // Use visualViewport for accurate dimensions on iOS (accounts for toolbar)
-      if (window.visualViewport) {
-        return {
-          width: window.visualViewport.width,
-          height: window.visualViewport.height
-        };
-      }
+  // Scroll to top on page load to prevent browser restoring mid-scroll position
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+  window.scrollTo(0, 0);
+
+  function getViewportSize() {
+    // Use visualViewport for accurate dimensions on iOS (accounts for toolbar)
+    if (window.visualViewport) {
       return {
-        width: window.innerWidth,
-        height: window.innerHeight
+        width: window.visualViewport.width,
+        height: window.visualViewport.height,
       };
     }
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight,
+    };
+  }
 
-    function initHeroAnimation(frameCount: number, frameDir: string) {
-      const canvas = document.getElementById("hero-lightpass") as HTMLCanvasElement;
-      let resizeCanvas: () => void;
-      
-      if (!canvas) return () => {};
-      const context = canvas.getContext("2d");
-      
-      const currentFrame = (index: number) => {
-        return `/${frameDir}/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
-      };
+  function initHeroAnimation(frameCount: number, frameDir: string) {
+    const canvas = document.getElementById(
+      "hero-lightpass",
+    ) as HTMLCanvasElement;
+    let resizeCanvas: () => void;
 
-      const images: HTMLImageElement[] = [];
-      const sequence = { frame: 0 }; 
+    if (!canvas) return () => {};
+    const context = canvas.getContext("2d");
 
-      for (let i = 0; i < frameCount; i++) {
-          const img = new Image();
-          img.src = currentFrame(i);
-          images.push(img);
+    const currentFrame = (index: number) => {
+      return `/${frameDir}/ezgif-frame-${(index + 1).toString().padStart(3, "0")}.jpg`;
+    };
+
+    const images: HTMLImageElement[] = [];
+    const sequence = { frame: 0 };
+
+    for (let i = 0; i < frameCount; i++) {
+      const img = new Image();
+      img.src = currentFrame(i);
+      images.push(img);
+    }
+
+    resizeCanvas = () => {
+      const vp = getViewportSize();
+      canvas.width = vp.width;
+      canvas.height = vp.height;
+      render();
+    };
+
+    images[0].onload = () => {
+      resizeCanvas();
+      window.addEventListener("resize", resizeCanvas);
+      // Also listen to visualViewport resize for iOS toolbar changes
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", resizeCanvas);
       }
+    };
 
-      resizeCanvas = () => {
-        const vp = getViewportSize();
-        canvas.width = vp.width;
-        canvas.height = vp.height;
-        render();
-      };
+    function render() {
+      if (images[sequence.frame] && context) {
+        const img = images[sequence.frame];
+        const canvasRatio = canvas.width / canvas.height;
+        const imgRatio = img.width / img.height;
 
-      images[0].onload = () => {
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        // Also listen to visualViewport resize for iOS toolbar changes
+        let drawWidth, drawHeight, offsetX, offsetY;
+
+        if (canvasRatio > imgRatio) {
+          drawWidth = canvas.width;
+          drawHeight = canvas.width / imgRatio;
+        } else {
+          drawWidth = canvas.height * imgRatio;
+          drawHeight = canvas.height;
+        }
+
+        offsetX = (canvas.width - drawWidth) / 2;
+        offsetY = (canvas.height - drawHeight) / 2;
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+      }
+    }
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#hero-sequence",
+        start: "top top",
+        end: "+=8000",
+        scrub: 1,
+        pin: true,
+      },
+    });
+
+    tl.to(
+      sequence,
+      {
+        frame: frameCount - 1,
+        snap: "frame",
+        ease: "none",
+        onUpdate: () => render(),
+        duration: 4,
+      },
+      0,
+    );
+    tl.to("#scroll-text-1", { autoAlpha: 1, y: 0, duration: 0.5 }, 0);
+    tl.to("#scroll-text-1", { autoAlpha: 0, y: -20, duration: 0.5 }, 1.0);
+    tl.to("#scroll-text-2", { autoAlpha: 1, y: 0, duration: 0.5 }, 1.5);
+    tl.to("#scroll-text-2", { autoAlpha: 0, y: -20, duration: 0.5 }, 2.5);
+    tl.to("#scroll-text-3", { autoAlpha: 1, y: 0, duration: 0.5 }, 3.0);
+    tl.to("#scroll-text-3", { autoAlpha: 0, y: -20, duration: 0.5 }, 4.0);
+    tl.to(sequence, { frame: frameCount - 1, duration: 0.5 }, 4);
+    tl.to("#scroll-text-4", { autoAlpha: 1, y: 0, duration: 0.5 }, 4.5);
+    tl.to("#scroll-text-4-sub", { autoAlpha: 1, y: 0, duration: 0.5 }, 4.5);
+    tl.to("#scroll-text-4", { autoAlpha: 0, y: -20, duration: 0.5 }, 5.5);
+    tl.to("#scroll-text-4-sub", { autoAlpha: 0, y: -20, duration: 0.5 }, 5.5);
+    tl.to(
+      sequence,
+      {
+        frame: 0,
+        snap: "frame",
+        ease: "none",
+        onUpdate: () => render(),
+        duration: 4,
+      },
+      4.5,
+    );
+    tl.to("#scroll-text-5", { autoAlpha: 1, y: 0, duration: 0.5 }, 6.5);
+    tl.to("#scroll-text-5", { autoAlpha: 0, y: -20, duration: 0.5 }, 7.5);
+    tl.to(
+      ".hero-content",
+      { autoAlpha: 1, y: 0, ease: "power2.out", duration: 1 },
+      8.0,
+    );
+
+    return () => {
+      if (resizeCanvas) {
+        window.removeEventListener("resize", resizeCanvas);
         if (window.visualViewport) {
-          window.visualViewport.addEventListener('resize', resizeCanvas);
-        }
-      };
-
-      function render() {
-        if (images[sequence.frame] && context) {
-          const img = images[sequence.frame];
-          const canvasRatio = canvas.width / canvas.height;
-          const imgRatio = img.width / img.height;
-
-          let drawWidth, drawHeight, offsetX, offsetY;
-
-          if (canvasRatio > imgRatio) {
-            drawWidth = canvas.width;
-            drawHeight = canvas.width / imgRatio;
-          } else {
-            drawWidth = canvas.height * imgRatio;
-            drawHeight = canvas.height;
-          }
-          
-          offsetX = (canvas.width - drawWidth) / 2;
-          offsetY = (canvas.height - drawHeight) / 2;
-
-          context.clearRect(0, 0, canvas.width, canvas.height);
-          context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+          window.visualViewport.removeEventListener("resize", resizeCanvas);
         }
       }
+      tl.kill();
+    };
+  }
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: "#hero-sequence",
-          start: "top top",
-          end: "+=8000", 
-          scrub: 1, 
-          pin: true,
-        }
-      });
+  let mm = gsap.matchMedia();
 
-      tl.to(sequence, { frame: frameCount - 1, snap: "frame", ease: "none", onUpdate: () => render(), duration: 4 }, 0);
-      tl.to("#scroll-text-1", { autoAlpha: 1, y: 0, duration: 0.5 }, 0);
-      tl.to("#scroll-text-1", { autoAlpha: 0, y: -20, duration: 0.5 }, 1.0);
-      tl.to("#scroll-text-2", { autoAlpha: 1, y: 0, duration: 0.5 }, 1.5);
-      tl.to("#scroll-text-2", { autoAlpha: 0, y: -20, duration: 0.5 }, 2.5);
-      tl.to("#scroll-text-3", { autoAlpha: 1, y: 0, duration: 0.5 }, 3.0);
-      tl.to("#scroll-text-3", { autoAlpha: 0, y: -20, duration: 0.5 }, 4.0);
-      tl.to(sequence, { frame: frameCount - 1, duration: 0.5 }, 4);
-      tl.to("#scroll-text-4", { autoAlpha: 1, y: 0, duration: 0.5 }, 4.5);
-      tl.to("#scroll-text-4-sub", { autoAlpha: 1, y: 0, duration: 0.5 }, 4.5);
-      tl.to("#scroll-text-4", { autoAlpha: 0, y: -20, duration: 0.5 }, 5.5);
-      tl.to("#scroll-text-4-sub", { autoAlpha: 0, y: -20, duration: 0.5 }, 5.5);
-      tl.to(sequence, { frame: 0, snap: "frame", ease: "none", onUpdate: () => render(), duration: 4 }, 4.5);
-      tl.to("#scroll-text-5", { autoAlpha: 1, y: 0, duration: 0.5 }, 6.5);
-      tl.to("#scroll-text-5", { autoAlpha: 0, y: -20, duration: 0.5 }, 7.5);
-      tl.to(".hero-content", { autoAlpha: 1, y: 0, ease: "power2.out", duration: 1 }, 8.0);
-      
-      return () => {
-        if (resizeCanvas) {
-          window.removeEventListener('resize', resizeCanvas);
-          if (window.visualViewport) {
-            window.visualViewport.removeEventListener('resize', resizeCanvas);
-          }
-        }
-        tl.kill();
-      };
-    }
-
-    let mm = gsap.matchMedia();
-
-    mm.add("(min-width: 769px)", () => {
-      return initHeroAnimation(265, "desktop_frames");
-    });
-    mm.add("(max-width: 768px)", () => {
-      return initHeroAnimation(300, "mobile_frames");
-    });
-  </script>
+  mm.add("(min-width: 769px)", () => {
+    return initHeroAnimation(265, "desktop_frames");
+  });
+  mm.add("(max-width: 768px)", () => {
+    return initHeroAnimation(300, "mobile_frames");
+  });
+</script>
