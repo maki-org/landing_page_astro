@@ -38,14 +38,10 @@ html {
   scroll-behavior: smooth;
   overflow-x: hidden;
   width: 100%;
-  height: -webkit-fill-available;
 }
 
 body {
   min-height: 100vh;
-  min-height: 100svh;
-  /* stable viewport height for iOS */
-  min-height: -webkit-fill-available;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
