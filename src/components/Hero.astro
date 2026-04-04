@@ -61,7 +61,8 @@
   .hero-section {
     position: relative;
     width: 100%;
-    height: 100dvh !important; /* Force dynamic override of GSAP pin spacer */
+    height: 100vh;
+    min-height: -webkit-fill-available;
     overflow: hidden;
     background-color: transparent;
   }
@@ -303,11 +304,6 @@
   import { ScrollTrigger } from "gsap/ScrollTrigger";
 
   gsap.registerPlugin(ScrollTrigger);
-
-  // Fix iOS Safari/Chrome: prevent ScrollTrigger from recalculating on toolbar resize
-  ScrollTrigger.config({
-    ignoreMobileResize: true,
-  });
 
   // Force-hide all overlay elements immediately before ScrollTrigger initializes
   // This prevents the flash of all texts showing on load/reload
