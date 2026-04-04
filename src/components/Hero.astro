@@ -61,7 +61,7 @@
   .hero-section {
     position: relative;
     width: 100%;
-    height: 100lvh; /* largest UI viewport height - ignores address bar */
+    height: 100dvh !important; /* Force dynamic override of GSAP pin spacer */
     overflow: hidden;
     background-color: transparent;
   }
@@ -331,12 +331,9 @@
   window.scrollTo(0, 0);
 
   function getViewportSize() {
-    // Explicitly grab the 100lvh bounds which are strictly larger
-    const hero = document.querySelector(".hero-section");
-    const hHeight = hero ? hero.clientHeight : 0;
     return {
       width: window.innerWidth,
-      height: Math.max(window.innerHeight, hHeight),
+      height: window.innerHeight,
     };
   }
 
