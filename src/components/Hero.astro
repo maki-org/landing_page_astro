@@ -61,9 +61,9 @@
   .hero-section {
     position: relative;
     width: 100%;
-    height: 100vh; /* absolute max viewport height */
+    height: 100lvh; /* largest UI viewport height - ignores address bar */
     overflow: hidden;
-    background-color: var(--c-white);
+    background-color: transparent;
   }
 
   .canvas-container {
@@ -304,9 +304,6 @@
 
   gsap.registerPlugin(ScrollTrigger);
 
-  // Normalize scroll to fix jumpy iOS Safari UI bar behaviors
-  ScrollTrigger.normalizeScroll(true);
-
   // Fix iOS Safari/Chrome: prevent ScrollTrigger from recalculating on toolbar resize
   ScrollTrigger.config({
     ignoreMobileResize: true,
@@ -334,10 +331,12 @@
   window.scrollTo(0, 0);
 
   function getViewportSize() {
+    // Explicitly grab the 100lvh bounds which are strictly larger
     const hero = document.querySelector(".hero-section");
+    const hHeight = hero ? hero.clientHeight : 0;
     return {
-      width: hero ? hero.clientWidth : window.innerWidth,
-      height: hero ? hero.clientHeight : window.innerHeight,
+      width: window.innerWidth,
+      height: Math.max(window.innerHeight, hHeight),
     };
   }
 
