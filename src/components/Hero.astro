@@ -61,7 +61,7 @@
   .hero-section {
     position: relative;
     width: 100%;
-    height: 100dvh; /* dynamic height to fix Safari gaps */
+    height: 100vh; /* absolute max viewport height */
     overflow: hidden;
     background-color: var(--c-white);
   }
@@ -334,9 +334,10 @@
   window.scrollTo(0, 0);
 
   function getViewportSize() {
+    const hero = document.querySelector(".hero-section");
     return {
-      width: window.innerWidth,
-      height: window.innerHeight,
+      width: hero ? hero.clientWidth : window.innerWidth,
+      height: hero ? hero.clientHeight : window.innerHeight,
     };
   }
 
