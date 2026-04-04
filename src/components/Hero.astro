@@ -61,7 +61,7 @@
   .hero-section {
     position: relative;
     width: 100%;
-    height: 100vh; /* max height */
+    height: 100dvh; /* dynamic height to fix Safari gaps */
     overflow: hidden;
     background-color: var(--c-white);
   }
@@ -303,6 +303,9 @@
   import { ScrollTrigger } from "gsap/ScrollTrigger";
 
   gsap.registerPlugin(ScrollTrigger);
+
+  // Normalize scroll to fix jumpy iOS Safari UI bar behaviors
+  ScrollTrigger.normalizeScroll(true);
 
   // Fix iOS Safari/Chrome: prevent ScrollTrigger from recalculating on toolbar resize
   ScrollTrigger.config({
