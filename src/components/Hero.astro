@@ -2,6 +2,7 @@
 
 ---
 
+<div id="hero-wrapper" style="height: 500vh; position: relative; width: 100%;">
 <section class="hero-section" id="hero-sequence">
   <!-- Pinned sequence background -->
   <div class="canvas-container">
@@ -56,10 +57,12 @@
     </div>
   </div>
 </section>
+</div>
 
 <style>
   .hero-section {
-    position: relative;
+    position: sticky;
+    top: 0;
     width: 100%;
     height: 100vh;
     min-height: -webkit-fill-available;
@@ -383,6 +386,11 @@
           drawHeight = canvas.height;
         }
 
+        // Apply a gentle 5% zoom to ensure any soft white frame borders inside the actual image files 
+        // are pushed completely off-screen and invisible.
+        drawWidth *= 1.05;
+        drawHeight *= 1.05;
+
         offsetX = (canvas.width - drawWidth) / 2;
         offsetY = (canvas.height - drawHeight) / 2;
 
@@ -393,11 +401,11 @@
 
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: "#hero-sequence",
+        trigger: "#hero-wrapper",
         start: "top top",
-        end: "+=8000",
+        end: "bottom bottom",
         scrub: 1,
-        pin: true,
+        // native CSS handles the sticking!
       },
     });
 
