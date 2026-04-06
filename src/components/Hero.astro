@@ -62,7 +62,7 @@
     position: relative;
     width: 100%;
     height: 100vh;
-    min-height: -webkit-fill-available;
+    height: 100svh;
     overflow: hidden;
     background-color: transparent;
   }
@@ -300,10 +300,12 @@
   }
 </style>
 
+<script>
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
 
   gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true });
 
   // Force-hide all overlay elements immediately before ScrollTrigger initializes
   // This prevents the flash of all texts showing on load/reload
