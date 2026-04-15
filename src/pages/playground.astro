@@ -78,7 +78,6 @@ import Layout from "../layouts/Layout.astro";
               <div class="feature-tag">📝 Detailed Notes</div>
               <div class="feature-tag">⚡ Quick Notes</div>
               <div class="feature-tag">📖 Definitions</div>
-              <div class="feature-tag">📊 Diagrams</div>
               <div class="feature-tag">🃏 Revision Card</div>
             </div>
           </div>
@@ -100,7 +99,7 @@ import Layout from "../layouts/Layout.astro";
 
             <!-- Overall Conclusion -->
             <div class="doc-section" id="conclusion-section" style="display:none;">
-              <h3 class="section-heading-primary">Overall Conclusion</h3>
+              <h3 class="section-heading-primary" style="margin-bottom: 20px;">Overall Conclusion</h3>
               <div class="conclusion-body" id="conclusion-body"></div>
             </div>
 
@@ -122,12 +121,6 @@ import Layout from "../layouts/Layout.astro";
                 <h3 class="card-title">Definitions</h3>
                 <div class="definitions-list" id="definitions-list"></div>
               </div>
-            </div>
-
-            <!-- Diagrams -->
-            <div class="diagrams-card">
-              <h3 class="diagrams-heading">Diagrams</h3>
-              <div class="diagrams-inner" id="diagrams-container"></div>
             </div>
 
             <!-- Revision Card -->
@@ -584,8 +577,10 @@ import Layout from "../layouts/Layout.astro";
     font-family: var(--font-sans);
     font-weight: 400;
     font-size: 20px;
-    line-height: 1.4;
+    line-height: 1.6;
     color: #000000;
+    white-space: pre-wrap;
+    margin-bottom: 12px;
   }
 
   .body-text-justified {
@@ -618,9 +613,10 @@ import Layout from "../layouts/Layout.astro";
   .body-text-large {
     font-family: var(--font-sans);
     font-weight: 400;
-    font-size: 24px;
+    font-size: 22px;
     line-height: 1.6;
     color: #000000;
+    white-space: pre-wrap;
   }
 
   .callout-bold {
@@ -734,8 +730,8 @@ import Layout from "../layouts/Layout.astro";
   .conclusion-body {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 6px;
+    align-items: flex-start;
+    gap: 16px;
   }
 
   /* ───────────────────────────────
@@ -831,88 +827,6 @@ import Layout from "../layouts/Layout.astro";
     color: #000000;
   }
 
-  /* ═══ Diagrams Card ═══ */
-  .diagrams-card {
-    border: 2px solid #485c11;
-    border-radius: 20px;
-    opacity: 0.8;
-    margin-bottom: 40px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .diagrams-heading {
-    font-family: var(--font-sans);
-    font-weight: 500;
-    font-size: 24px;
-    line-height: 1.3;
-    text-transform: capitalize;
-    color: #485c11;
-    padding: 33px 0 0 31px;
-    margin-bottom: 20px;
-  }
-
-  .diagrams-inner {
-    padding: 0 41px 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-    align-items: center;
-  }
-
-  .diagrams-row-top {
-    display: flex;
-    gap: 60px;
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .diagram-item {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 15px;
-    flex: 1;
-    min-width: 180px;
-    max-width: 280px;
-  }
-
-  .diagram-caption {
-    font-family: var(--font-sans);
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 1.4;
-    color: #000000;
-    text-align: center;
-  }
-
-  .diagram-placeholder {
-    border-radius: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 200px;
-    overflow: hidden;
-    min-height: 160px;
-  }
-
-  .diagram-label {
-    font-family: var(--font-sans);
-    font-size: 14px;
-    color: #485c11;
-    opacity: 0.7;
-    text-align: center;
-    padding: 10px;
-  }
-
-  .diagram-full {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
   /* ═══════════════════════════════════════════ */
   /* REVISION CARD                               */
   /* ═══════════════════════════════════════════ */
@@ -961,8 +875,10 @@ import Layout from "../layouts/Layout.astro";
 
   .revision-law-card {
     border-radius: 15px;
-    padding: 10px 16px 16px;
+    padding: 16px;
+    margin-bottom: 24px;
     position: relative;
+    background-color: #fff;
   }
 
   .law-first {
@@ -984,19 +900,19 @@ import Layout from "../layouts/Layout.astro";
   .law-title {
     font-family: "Lucida Handwriting", "Brush Script MT", cursive;
     font-weight: 400;
-    font-size: 21px;
+    font-size: 26px;
     line-height: 1.4;
     color: #000000;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
   }
 
   .law-formula-box {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 6px 15px;
+    padding: 10px 15px;
     border-radius: 7px;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
   }
 
   .formula-yellow {
@@ -1018,37 +934,38 @@ import Layout from "../layouts/Layout.astro";
   .law-formula-box span {
     font-family: "Poppins", sans-serif;
     font-weight: 400;
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1.4;
     letter-spacing: 0.12em;
     color: #000000;
-    text-shadow: 0px 6px 6px rgba(0, 0, 0, 0.25);
   }
 
   .law-variables {
     font-family: var(--font-sans);
     font-weight: 400;
-    font-size: 10px;
+    font-size: 14px;
     line-height: 1.4;
     color: #000000;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    white-space: pre-wrap;
   }
 
   .law-principle {
     font-family: var(--font-sans);
     font-weight: 500;
-    font-size: 11px;
-    line-height: 1.4;
+    font-size: 15px;
+    line-height: 1.5;
     color: #000000;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
   }
 
   .law-detail {
     font-family: var(--font-sans);
     font-weight: 400;
-    font-size: 10px;
-    line-height: 1.5;
+    font-size: 14px;
+    line-height: 1.6;
     color: #000000;
+    margin-bottom: 4px;
   }
 
   .law-statements {
@@ -1060,7 +977,7 @@ import Layout from "../layouts/Layout.astro";
   .law-definition {
     font-family: var(--font-sans);
     font-weight: 500;
-    font-size: 12px;
+    font-size: 16px;
     line-height: 1.4;
     color: #000;
     font-style: italic;
@@ -1070,7 +987,7 @@ import Layout from "../layouts/Layout.astro";
   .law-detail-italic {
     font-family: var(--font-sans);
     font-weight: 400;
-    font-size: 11px;
+    font-size: 14px;
     line-height: 1.5;
     color: #000;
     margin-bottom: 6px;
@@ -1079,7 +996,7 @@ import Layout from "../layouts/Layout.astro";
   .law-callout {
     font-family: var(--font-sans);
     font-weight: 600;
-    font-size: 11px;
+    font-size: 15px;
     line-height: 1.4;
     color: #000;
   }
@@ -1162,15 +1079,6 @@ import Layout from "../layouts/Layout.astro";
 
     .revision-columns {
       grid-template-columns: 1fr;
-    }
-
-    .diagrams-row-top {
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    .diagram-item {
-      max-width: 100%;
     }
   }
 
@@ -1476,34 +1384,6 @@ import Layout from "../layouts/Layout.astro";
         p.textContent = `${d.term} : ${d.definition}`;
         defsList.appendChild(p);
       }
-    }
-
-    // ─── Diagrams ───
-    const diagramsContainer = document.getElementById("diagrams-container");
-    if (diagramsContainer && report.diagrams) {
-      diagramsContainer.innerHTML = '';
-      const row = document.createElement('div');
-      row.className = 'diagrams-row-top';
-      const gradients = [
-        'linear-gradient(135deg, #e8eee0 0%, #d4dcc8 100%)',
-        'linear-gradient(135deg, #eef3e6 0%, #dce5cf 100%)',
-        'linear-gradient(135deg, #f0f4ea 0%, #dfe8d3 100%)',
-        'linear-gradient(135deg, #edf1e5 0%, #d8e1cb 100%)',
-        'linear-gradient(135deg, #e5edd9 0%, #d0dbc3 100%)',
-      ];
-      const icons = ['📊', '⚡', '🔀', '📈', '🧪'];
-      report.diagrams.forEach((diag: any, i: number) => {
-        const item = document.createElement('div');
-        item.className = 'diagram-item';
-        item.innerHTML = `
-          <p class="diagram-caption">${escapeHtml(diag.title)}</p>
-          <div class="diagram-placeholder" style="background: ${gradients[i % gradients.length]}; height: ${180 + (i * 20)}px;">
-            <span class="diagram-label">${icons[i % icons.length]} ${escapeHtml(diag.description || diag.title)}</span>
-          </div>
-        `;
-        row.appendChild(item);
-      });
-      diagramsContainer.appendChild(row);
     }
 
     // ─── Revision Cards ───
