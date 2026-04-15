@@ -1,0 +1,1680 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Playground | Wynaut Labs">
+  <main class="playground-main">
+    <div class="playground-wrapper">
+      <!-- Left Panel: Controls Sidebar -->
+      <aside class="controls-panel" id="controls-panel">
+        <a href="/" class="back-btn" aria-label="Back to home">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </a>
+        <div class="controls-inner">
+          <div class="controls-header">
+            <span class="enter-label">ENTER AUDIO</span>
+            <div class="voice-section">
+              <span class="voice-label">Voice Sample(WAV/MP3)</span>
+              <div class="upload-stack">
+                <div class="drop-zone" id="drop-zone">
+                  <span class="drop-text">Click or drag file here</span>
+                </div>
+                <span class="sample-link" id="sample-link">Use Sample Audio</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Status area -->
+          <div class="status-area" id="status-area" style="display:none;">
+            <div class="status-text" id="status-text"></div>
+            <div class="progress-bar" id="progress-bar">
+              <div class="progress-fill" id="progress-fill"></div>
+            </div>
+          </div>
+
+          <button class="run-btn" id="run-btn">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              stroke="none"
+            >
+              <polygon points="6 3 20 12 6 21 6 3"></polygon>
+            </svg>
+            Create
+          </button>
+        </div>
+      </aside>
+
+      <!-- Right Panel: Report Output -->
+      <section class="report-area">
+        <!-- Report Tab Header -->
+        <div class="report-tab-bar">
+          <div class="report-tab">
+            <span>Report</span>
+          </div>
+        </div>
+
+        <!-- Report Content -->
+        <div class="report-content" id="report-content">
+          <!-- Empty State -->
+          <div class="empty-state" id="empty-state">
+            <div class="empty-icon">
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#A0B777" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                <line x1="12" y1="19" x2="12" y2="23"></line>
+                <line x1="8" y1="23" x2="16" y2="23"></line>
+              </svg>
+            </div>
+            <h2 class="empty-title">Upload an audio file to get started</h2>
+            <p class="empty-desc">Upload a classroom lecture recording (WAV or MP3) and we'll generate detailed study notes, definitions, formulas, diagrams, and revision cards for you.</p>
+            <div class="empty-features">
+              <div class="feature-tag">📝 Detailed Notes</div>
+              <div class="feature-tag">⚡ Quick Notes</div>
+              <div class="feature-tag">📖 Definitions</div>
+              <div class="feature-tag">📊 Diagrams</div>
+              <div class="feature-tag">🃏 Revision Card</div>
+            </div>
+          </div>
+
+          <!-- Generated Report (hidden initially) -->
+          <div class="generated-report" id="generated-report" style="display:none;">
+            <!-- Branding watermark -->
+            <div class="report-branding">
+              <img src="/images/union.svg" alt="Wynaut Labs" width="55" height="24" />
+              <span class="brand-text">WYNAUT<br/>LABS</span>
+            </div>
+
+            <!-- Title & Subtitle -->
+            <h1 class="doc-title" id="report-title"></h1>
+            <h2 class="doc-subtitle">DETAILED NOTES</h2>
+
+            <!-- Detailed Notes Sections (rendered dynamically) -->
+            <div id="detailed-notes-container"></div>
+
+            <!-- Overall Conclusion -->
+            <div class="doc-section" id="conclusion-section" style="display:none;">
+              <h3 class="section-heading-primary">Overall Conclusion</h3>
+              <div class="conclusion-body" id="conclusion-body"></div>
+            </div>
+
+            <!-- Quick Notes -->
+            <h2 class="quick-notes-title">QUICK NOTES</h2>
+
+            <!-- Important Formulas -->
+            <div class="formulas-card">
+              <div class="formulas-bg"></div>
+              <div class="formulas-content">
+                <h3 class="card-title">Important Formulas</h3>
+                <div class="formulas-list" id="formulas-list"></div>
+              </div>
+            </div>
+
+            <!-- Definitions -->
+            <div class="definitions-card">
+              <div class="definitions-content">
+                <h3 class="card-title">Definitions</h3>
+                <div class="definitions-list" id="definitions-list"></div>
+              </div>
+            </div>
+
+            <!-- Diagrams -->
+            <div class="diagrams-card">
+              <h3 class="diagrams-heading">Diagrams</h3>
+              <div class="diagrams-inner" id="diagrams-container"></div>
+            </div>
+
+            <!-- Revision Card -->
+            <h2 class="revision-card-title">REVISION CARD</h2>
+            <div class="revision-card">
+              <h2 class="revision-main-title" id="revision-title"></h2>
+              <div class="revision-columns" id="revision-columns"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  /* ========================================
+     PLAYGROUND PAGE
+     ======================================== */
+
+  .playground-main {
+    background-color: #ffffff;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .playground-wrapper {
+    display: flex;
+    width: 100%;
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ───────────────────────────────
+     LEFT SIDEBAR (Controls Panel)
+     ─────────────────────────────── */
+  .controls-panel {
+    width: 290px;
+    min-width: 290px;
+    background-color: rgba(160, 183, 119, 0.25);
+    border-right: 1px solid #485c11;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .back-btn {
+    position: absolute;
+    top: 30px;
+    left: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: transparent;
+    color: #485c11;
+    transition: all 0.2s ease;
+    z-index: 5;
+  }
+
+  .back-btn:hover {
+    background-color: rgba(72, 92, 17, 0.1);
+    transform: translateX(-4px);
+  }
+
+  .controls-inner {
+    padding: 120px 20px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .controls-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .enter-label {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.4;
+    color: #242424;
+  }
+
+  .voice-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .voice-label {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #383838;
+  }
+
+  .upload-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .drop-zone {
+    width: 100%;
+    height: 81px;
+    background-color: #fafafa;
+    border: 1px dashed #454545;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .drop-zone:hover {
+    border-color: var(--c-primary);
+    background-color: #f0f5e8;
+  }
+
+  .drop-zone.has-file {
+    border-color: #485c11;
+    background-color: #e8f0d8;
+    border-style: solid;
+  }
+
+  .drop-text {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 1.4;
+    letter-spacing: 0.005em;
+    color: #222222;
+    text-align: center;
+  }
+
+  .sample-link {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 1.4;
+    letter-spacing: 0.005em;
+    color: #0095ff;
+    text-align: right;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .sample-link:hover {
+    opacity: 0.7;
+    text-decoration: underline;
+  }
+
+  /* Status area */
+  .status-area {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .status-text {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: #485c11;
+    font-weight: 500;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background-color: #e0e8d0;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    width: 0%;
+    height: 100%;
+    background-color: #485c11;
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  .progress-fill.indeterminate {
+    width: 30%;
+    animation: indeterminate 1.5s infinite ease-in-out;
+  }
+
+  @keyframes indeterminate {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
+  }
+
+  .run-btn {
+    width: 100%;
+    height: 42px;
+    background-color: #485c11;
+    border: none;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #ffffff;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.4;
+    letter-spacing: 0.005em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .run-btn:hover {
+    background-color: #3b4d0e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(72, 92, 17, 0.3);
+  }
+
+  .run-btn:active {
+    transform: translateY(0);
+  }
+
+  .run-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .run-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* ───────────────────────────────
+     RIGHT PANEL (Report Area)
+     ─────────────────────────────── */
+  .report-area {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    overflow-y: auto;
+  }
+
+  /* Tab bar */
+  .report-tab-bar {
+    background: transparent;
+    border-bottom: 1px solid #485c11;
+    padding: 10px 0 0 41px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #fff;
+  }
+
+  .report-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 16px 4px;
+    background-color: #e7eddd;
+    border: 1px solid #a0b777;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+  }
+
+  .report-tab span {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+    color: #000000;
+  }
+
+  /* Report Content */
+  .report-content {
+    padding: 18px 40px 80px 40px;
+    position: relative;
+  }
+
+  /* Empty State */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    gap: 20px;
+    padding: 40px;
+  }
+
+  .empty-icon {
+    opacity: 0.5;
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.05); }
+  }
+
+  .empty-title {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 24px;
+    color: #485c11;
+  }
+
+  .empty-desc {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 16px;
+    color: #666;
+    max-width: 480px;
+    line-height: 1.6;
+  }
+
+  .empty-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  .feature-tag {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(160, 183, 119, 0.2);
+    color: #485c11;
+    border: 1px solid rgba(160, 183, 119, 0.4);
+  }
+
+  /* Branding watermark */
+  .report-branding {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    margin-bottom: 28px;
+  }
+
+  .brand-text {
+    font-family: var(--font-logo);
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 0.96;
+    color: #485c11;
+  }
+
+  /* Document Title */
+  .doc-title {
+    font-family: var(--font-sans);
+    font-weight: 900;
+    font-size: 40px;
+    line-height: 1.4;
+    text-transform: uppercase;
+    color: #a0b777;
+    margin-bottom: 8px;
+  }
+
+  .doc-subtitle {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 1.4;
+    text-transform: uppercase;
+    color: #485c11;
+    margin-bottom: 22px;
+  }
+
+  /* ───────────────────────────────
+     SECTION STYLES
+     ─────────────────────────────── */
+  .doc-section {
+    margin-bottom: 34px;
+  }
+
+  .section-heading-primary {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.4;
+    text-transform: capitalize;
+    color: #485c11;
+    margin-bottom: 16px;
+  }
+
+  .section-heading-sub {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.4;
+    text-transform: capitalize;
+    color: #000000;
+    margin-bottom: 16px;
+  }
+
+  .section-heading-accent {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1.4;
+    text-transform: capitalize;
+    color: #485c11;
+    margin-bottom: 16px;
+  }
+
+  .section-body {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .section-body.gap-20 {
+    gap: 20px;
+  }
+
+  .sub-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sub-heading {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.3;
+    color: #000000;
+  }
+
+  .text-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* Text Styles */
+  .body-text {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.4;
+    color: #000000;
+  }
+
+  .body-text-justified {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.3;
+    color: #000000;
+    text-align: justify;
+  }
+
+  .body-text-small {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.4;
+    color: #000000;
+    text-align: justify;
+  }
+
+  .body-text-light {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.6;
+    text-transform: capitalize;
+    color: #000000;
+  }
+
+  .body-text-large {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 1.6;
+    color: #000000;
+  }
+
+  .callout-bold {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.4;
+    color: #000000;
+  }
+
+  .formula-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 30px;
+  }
+
+  .formula-math {
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.4;
+    letter-spacing: 0.12em;
+    text-align: center;
+    color: #000000;
+  }
+
+  .formula-inline {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.6;
+    text-align: right;
+    color: #000000;
+  }
+
+  /* Sign Conventions */
+  .sign-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-left: 21px;
+  }
+
+  .sign-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sign-label {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.4;
+    text-transform: capitalize;
+    color: #000000;
+  }
+
+  /* ───────────────────────────────
+     PROCESSES GRID
+     ─────────────────────────────── */
+  .processes-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .process-card {
+    position: relative;
+  }
+
+  .process-title {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.4;
+    text-transform: capitalize;
+    color: #000000;
+    margin-bottom: 10px;
+  }
+
+  .process-body {
+    padding-left: 26px;
+  }
+
+  .process-body p {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.6;
+    text-transform: capitalize;
+    color: #000000;
+  }
+
+  /* Entropy section */
+  .entropy-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .entropy-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Conclusion */
+  .conclusion-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ───────────────────────────────
+     QUICK NOTES SECTION
+     ─────────────────────────────── */
+  .quick-notes-title {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 1.4;
+    text-transform: uppercase;
+    color: #485c11;
+    margin-bottom: 22px;
+    margin-top: 20px;
+  }
+
+  /* ═══ Important Formulas Card ═══ */
+  .formulas-card {
+    position: relative;
+    margin-bottom: 40px;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .formulas-bg {
+    position: absolute;
+    inset: 0;
+    background-color: #b9c5a3;
+    opacity: 0.25;
+    border-radius: 20px;
+  }
+
+  .formulas-content {
+    position: relative;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .card-title {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 1.3;
+    text-transform: capitalize;
+    color: #485c11;
+  }
+
+  .formulas-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .formula-line {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.3;
+    color: #000000;
+    height: 30px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* ═══ Definitions Card ═══ */
+  .definitions-card {
+    background-color: #edf0e8;
+    border-radius: 20px;
+    opacity: 0.8;
+    margin-bottom: 40px;
+  }
+
+  .definitions-content {
+    padding: 26px 31px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .definitions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .definitions-list p {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.3;
+    color: #000000;
+  }
+
+  /* ═══ Diagrams Card ═══ */
+  .diagrams-card {
+    border: 2px solid #485c11;
+    border-radius: 20px;
+    opacity: 0.8;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .diagrams-heading {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 1.3;
+    text-transform: capitalize;
+    color: #485c11;
+    padding: 33px 0 0 31px;
+    margin-bottom: 20px;
+  }
+
+  .diagrams-inner {
+    padding: 0 41px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .diagrams-row-top {
+    display: flex;
+    gap: 60px;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .diagram-item {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    flex: 1;
+    min-width: 180px;
+    max-width: 280px;
+  }
+
+  .diagram-caption {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #000000;
+    text-align: center;
+  }
+
+  .diagram-placeholder {
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 200px;
+    overflow: hidden;
+    min-height: 160px;
+  }
+
+  .diagram-label {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: #485c11;
+    opacity: 0.7;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .diagram-full {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* ═══════════════════════════════════════════ */
+  /* REVISION CARD                               */
+  /* ═══════════════════════════════════════════ */
+  .revision-card-title {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 1.4;
+    text-transform: uppercase;
+    color: #485c11;
+    margin-bottom: 16px;
+  }
+
+  .revision-card {
+    background-color: #ffffff;
+    border-radius: 18px;
+    box-shadow: 3px 3px 12px 0px rgba(72, 92, 17, 0.5);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 60px;
+  }
+
+  .revision-main-title {
+    font-family: "Lily Script One", cursive;
+    font-weight: 400;
+    font-size: 47px;
+    line-height: 1.4;
+    color: #000000;
+    text-align: right;
+    padding: 9px 20px 0;
+  }
+
+  .revision-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 0 15px 30px;
+  }
+
+  .revision-col {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .revision-law-card {
+    border-radius: 15px;
+    padding: 10px 16px 16px;
+    position: relative;
+  }
+
+  .law-first {
+    border: 1.5px solid #b7c402;
+  }
+
+  .law-second {
+    border: 1.5px solid #21a179;
+  }
+
+  .law-processes {
+    border: 1.5px solid #db7093;
+  }
+
+  .law-entropy {
+    border: 1.5px solid #6a5acd;
+  }
+
+  .law-title {
+    font-family: "Lucida Handwriting", "Brush Script MT", cursive;
+    font-weight: 400;
+    font-size: 21px;
+    line-height: 1.4;
+    color: #000000;
+    margin-bottom: 8px;
+  }
+
+  .law-formula-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 15px;
+    border-radius: 7px;
+    margin-bottom: 8px;
+  }
+
+  .formula-yellow {
+    background-color: rgba(215, 230, 0, 0.4);
+  }
+
+  .formula-green {
+    background-color: rgba(0, 180, 120, 0.15);
+  }
+
+  .formula-pink {
+    background-color: rgba(219, 112, 147, 0.15);
+  }
+
+  .formula-purple {
+    background-color: rgba(106, 90, 205, 0.15);
+  }
+
+  .law-formula-box span {
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.4;
+    letter-spacing: 0.12em;
+    color: #000000;
+    text-shadow: 0px 6px 6px rgba(0, 0, 0, 0.25);
+  }
+
+  .law-variables {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 1.4;
+    color: #000000;
+    margin-bottom: 6px;
+  }
+
+  .law-principle {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 1.4;
+    color: #000000;
+    margin-bottom: 4px;
+  }
+
+  .law-detail {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 1.5;
+    color: #000000;
+  }
+
+  .law-statements {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .law-definition {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #000;
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+
+  .law-detail-italic {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 1.5;
+    color: #000;
+    margin-bottom: 6px;
+  }
+
+  .law-callout {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 1.4;
+    color: #000;
+  }
+
+  .process-summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .process-summary-list p {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 1.5;
+    color: #000;
+  }
+
+  /* List styling */
+  .content-list {
+    list-style: disc;
+    padding-left: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .content-list li {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.4;
+    color: #000000;
+  }
+
+  /* ───────────────────────────────
+     RESPONSIVE
+     ─────────────────────────────── */
+  @media (max-width: 1024px) {
+    .playground-wrapper {
+      flex-direction: column;
+    }
+
+    .controls-panel {
+      width: 100%;
+      min-width: 100%;
+      position: relative;
+      top: 0;
+      height: auto;
+      min-height: auto;
+      border-right: none;
+      border-bottom: 1px solid #485c11;
+    }
+
+    .controls-inner {
+      padding: 100px 24px 24px;
+      flex-direction: row;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .controls-header {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .run-btn {
+      min-width: 200px;
+      flex-shrink: 0;
+    }
+
+    .report-tab-bar {
+      top: 0;
+      padding-left: 24px;
+    }
+
+    .report-content {
+      padding: 18px 24px 60px;
+    }
+
+    .revision-columns {
+      grid-template-columns: 1fr;
+    }
+
+    .diagrams-row-top {
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .diagram-item {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .controls-inner {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .run-btn {
+      width: 100%;
+    }
+
+    .doc-title {
+      font-size: 28px;
+    }
+
+    .doc-subtitle {
+      font-size: 22px;
+    }
+
+    .section-heading-primary,
+    .section-heading-accent {
+      font-size: 20px;
+    }
+
+    .body-text,
+    .body-text-justified,
+    .body-text-small,
+    .body-text-light,
+    .callout-bold {
+      font-size: 16px;
+    }
+
+    .body-text-large {
+      font-size: 20px;
+    }
+
+    .formula-math {
+      font-size: 16px;
+    }
+
+    .process-body p {
+      font-size: 16px;
+    }
+
+    .definitions-list p {
+      font-size: 18px;
+    }
+
+    .formula-line {
+      font-size: 16px;
+    }
+
+    .revision-main-title {
+      font-size: 32px;
+    }
+
+    .report-content {
+      padding: 16px 16px 48px;
+    }
+
+    .quick-notes-title,
+    .revision-card-title {
+      font-size: 24px;
+    }
+  }
+</style>
+
+<script>
+  // ============================================================================
+  // PLAYGROUND CLIENT — Connects to backend /playground/generate
+  // ============================================================================
+
+  const API_BASE = 'https://stelper-api.heymaki.ai';
+
+  let selectedFile: File | null = null;
+
+  const dropZone = document.getElementById("drop-zone") as HTMLElement;
+  const dropText = dropZone?.querySelector(".drop-text") as HTMLElement;
+  const runBtn = document.getElementById("run-btn") as HTMLButtonElement;
+  const statusArea = document.getElementById("status-area") as HTMLElement;
+  const statusText = document.getElementById("status-text") as HTMLElement;
+  const progressFill = document.getElementById("progress-fill") as HTMLElement;
+  const emptyState = document.getElementById("empty-state") as HTMLElement;
+  const generatedReport = document.getElementById("generated-report") as HTMLElement;
+  const sampleLink = document.getElementById("sample-link") as HTMLElement;
+
+  // ─── File Selection ───
+  function setFile(file: File) {
+    selectedFile = file;
+    if (dropText) dropText.textContent = file.name;
+    dropZone?.classList.add("has-file");
+  }
+
+  if (dropZone) {
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = "#485C11";
+      dropZone.style.backgroundColor = "#f0f5e8";
+    });
+
+    dropZone.addEventListener("dragleave", () => {
+      if (!selectedFile) {
+        dropZone.style.borderColor = "#454545";
+        dropZone.style.backgroundColor = "#FAFAFA";
+      }
+    });
+
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0) {
+        setFile(files[0]);
+      }
+    });
+
+    dropZone.addEventListener("click", () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".wav,.mp3,.m4a,.ogg,.webm";
+      input.onchange = (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (file) setFile(file);
+      };
+      input.click();
+    });
+  }
+
+  // ─── Sample Audio ───
+  if (sampleLink) {
+    sampleLink.addEventListener("click", async () => {
+      setStatus("Downloading sample audio...", true);
+      statusArea.style.display = "flex";
+      try {
+        // Create a simple sample audio notification
+        setStatus("Using sample — please upload a real audio file for best results", false);
+        // Create a tiny valid WAV file as sample
+        const sampleResponse = await fetch('/sample_audio.wav');
+        if (sampleResponse.ok) {
+          const blob = await sampleResponse.blob();
+          const file = new File([blob], 'sample_audio.wav', { type: 'audio/wav' });
+          setFile(file);
+          setStatus("Sample audio loaded!", false);
+        } else {
+          setStatus("No sample audio available. Please upload your own file.", false);
+        }
+      } catch {
+        setStatus("Please upload an audio file instead.", false);
+      }
+      setTimeout(() => { statusArea.style.display = "none"; }, 3000);
+    });
+  }
+
+  // ─── Status Helpers ───
+  function setStatus(text: string, indeterminate: boolean) {
+    statusArea.style.display = "flex";
+    statusText.textContent = text;
+    if (indeterminate) {
+      progressFill.classList.add("indeterminate");
+      progressFill.style.width = "30%";
+    } else {
+      progressFill.classList.remove("indeterminate");
+      progressFill.style.width = "100%";
+    }
+  }
+
+  // ─── Run Button — Generate Report ───
+  if (runBtn) {
+    runBtn.addEventListener("click", async () => {
+      if (!selectedFile) {
+        alert("Please upload an audio file first.");
+        return;
+      }
+
+      // Disable button
+      runBtn.disabled = true;
+      runBtn.innerHTML = '⏳ Processing...';
+      setStatus("Uploading audio...", true);
+
+      try {
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+
+        setStatus("Transcribing audio with Whisper...", true);
+
+        const response = await fetch(`${API_BASE}/playground/generate`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.error || 'Server error');
+        }
+
+        setStatus("Generating report...", true);
+        const data = await response.json();
+
+        if (data.success && data.report) {
+          renderReport(data.report);
+          setStatus(`✅ Report generated in ${(data.processingTimeMs / 1000).toFixed(1)}s`, false);
+          setTimeout(() => { statusArea.style.display = "none"; }, 4000);
+        } else {
+          throw new Error('Invalid response from server');
+        }
+
+      } catch (error: any) {
+        setStatus(`❌ Error: ${error.message}`, false);
+        setTimeout(() => { statusArea.style.display = "none"; }, 6000);
+      } finally {
+        runBtn.disabled = false;
+        runBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6 3 20 12 6 21 6 3"/></svg> Create`;
+      }
+    });
+  }
+
+  // ============================================================================
+  // RENDER REPORT — Maps JSON data to the existing CSS styled structure
+  // ============================================================================
+
+  function renderReport(report: any) {
+    // Hide empty state, show report
+    emptyState.style.display = "none";
+    generatedReport.style.display = "block";
+
+    // Scroll report area to top
+    document.querySelector('.report-area')?.scrollTo(0, 0);
+
+    // Title
+    const titleEl = document.getElementById("report-title");
+    if (titleEl) titleEl.textContent = report.title || 'NOTES';
+
+    // ─── Detailed Notes ───
+    const notesContainer = document.getElementById("detailed-notes-container");
+    if (notesContainer && report.detailedNotes) {
+      notesContainer.innerHTML = '';
+      for (const section of report.detailedNotes) {
+        const sectionEl = document.createElement('div');
+        sectionEl.className = 'doc-section';
+
+        // Heading
+        const heading = document.createElement('h3');
+        const headingType = section.headingType || 'primary';
+        heading.className = `section-heading-${headingType}`;
+        heading.textContent = section.heading;
+        sectionEl.appendChild(heading);
+
+        // Content
+        if (section.content) {
+          const bodyEl = document.createElement('div');
+          bodyEl.className = 'section-body';
+          renderContentBlocks(bodyEl, section.content);
+          sectionEl.appendChild(bodyEl);
+        }
+
+        notesContainer.appendChild(sectionEl);
+      }
+    }
+
+    // ─── Conclusion ───
+    const conclusionSection = document.getElementById("conclusion-section");
+    const conclusionBody = document.getElementById("conclusion-body");
+    if (conclusionSection && conclusionBody && report.conclusion) {
+      conclusionSection.style.display = "block";
+      conclusionBody.innerHTML = '';
+      if (report.conclusion.summary) {
+        for (const line of report.conclusion.summary) {
+          const p = document.createElement('p');
+          p.className = 'body-text-large';
+          p.textContent = line;
+          conclusionBody.appendChild(p);
+        }
+      }
+      if (report.conclusion.implications) {
+        for (const line of report.conclusion.implications) {
+          const p = document.createElement('p');
+          p.className = 'body-text-large';
+          p.textContent = line;
+          conclusionBody.appendChild(p);
+        }
+      }
+    }
+
+    // ─── Quick Notes / Formulas ───
+    const formulasList = document.getElementById("formulas-list");
+    if (formulasList && report.quickNotes?.formulas) {
+      formulasList.innerHTML = '';
+      for (const f of report.quickNotes.formulas) {
+        const p = document.createElement('p');
+        p.className = 'formula-line';
+        p.textContent = `${f.name} : ${f.formula}`;
+        formulasList.appendChild(p);
+      }
+    }
+
+    // ─── Definitions ───
+    const defsList = document.getElementById("definitions-list");
+    if (defsList && report.definitions) {
+      defsList.innerHTML = '';
+      for (const d of report.definitions) {
+        const p = document.createElement('p');
+        p.textContent = `${d.term} : ${d.definition}`;
+        defsList.appendChild(p);
+      }
+    }
+
+    // ─── Diagrams ───
+    const diagramsContainer = document.getElementById("diagrams-container");
+    if (diagramsContainer && report.diagrams) {
+      diagramsContainer.innerHTML = '';
+      const row = document.createElement('div');
+      row.className = 'diagrams-row-top';
+      const gradients = [
+        'linear-gradient(135deg, #e8eee0 0%, #d4dcc8 100%)',
+        'linear-gradient(135deg, #eef3e6 0%, #dce5cf 100%)',
+        'linear-gradient(135deg, #f0f4ea 0%, #dfe8d3 100%)',
+        'linear-gradient(135deg, #edf1e5 0%, #d8e1cb 100%)',
+        'linear-gradient(135deg, #e5edd9 0%, #d0dbc3 100%)',
+      ];
+      const icons = ['📊', '⚡', '🔀', '📈', '🧪'];
+      report.diagrams.forEach((diag: any, i: number) => {
+        const item = document.createElement('div');
+        item.className = 'diagram-item';
+        item.innerHTML = `
+          <p class="diagram-caption">${escapeHtml(diag.title)}</p>
+          <div class="diagram-placeholder" style="background: ${gradients[i % gradients.length]}; height: ${180 + (i * 20)}px;">
+            <span class="diagram-label">${icons[i % icons.length]} ${escapeHtml(diag.description || diag.title)}</span>
+          </div>
+        `;
+        row.appendChild(item);
+      });
+      diagramsContainer.appendChild(row);
+    }
+
+    // ─── Revision Cards ───
+    const revisionTitle = document.getElementById("revision-title");
+    const revisionColumns = document.getElementById("revision-columns");
+    if (revisionTitle && revisionColumns && report.revisionCard) {
+      revisionTitle.textContent = report.revisionCard.title || report.title || 'Notes';
+      revisionColumns.innerHTML = '';
+
+      const cards = report.revisionCard.cards || [];
+      const colorMap: Record<string, { border: string; bg: string; class: string }> = {
+        yellow: { border: '#b7c402', bg: 'rgba(215, 230, 0, 0.4)', class: 'law-first' },
+        green:  { border: '#21a179', bg: 'rgba(0, 180, 120, 0.15)', class: 'law-second' },
+        pink:   { border: '#db7093', bg: 'rgba(219, 112, 147, 0.15)', class: 'law-processes' },
+        purple: { border: '#6a5acd', bg: 'rgba(106, 90, 205, 0.15)', class: 'law-entropy' },
+      };
+
+      // Split cards into two columns
+      const mid = Math.ceil(cards.length / 2);
+      const leftCards = cards.slice(0, mid);
+      const rightCards = cards.slice(mid);
+
+      [leftCards, rightCards].forEach((colCards: any[]) => {
+        const col = document.createElement('div');
+        col.className = 'revision-col';
+
+        for (const card of colCards) {
+          const color = colorMap[card.color] || colorMap.yellow;
+          const cardEl = document.createElement('div');
+          cardEl.className = `revision-law-card`;
+          cardEl.style.border = `1.5px solid ${color.border}`;
+
+          let formulaHtml = '';
+          if (card.formula) {
+            formulaHtml = `
+              <div class="law-formula-box" style="background-color: ${color.bg}">
+                <span>${escapeHtml(card.formula)}</span>
+              </div>
+            `;
+          }
+
+          let labelsHtml = '';
+          if (card.formulaLabel) {
+            labelsHtml = `<p class="law-variables">${escapeHtml(card.formulaLabel)}</p>`;
+          }
+
+          let detailsHtml = '';
+          if (card.details) {
+            detailsHtml = card.details.map((d: string) => `<p class="law-detail">${escapeHtml(d)}</p>`).join('');
+          }
+
+          cardEl.innerHTML = `
+            <h4 class="law-title">${escapeHtml(card.title)}</h4>
+            ${formulaHtml}
+            ${labelsHtml}
+            <p class="law-principle">${escapeHtml(card.principle || '')}</p>
+            ${detailsHtml}
+          `;
+          col.appendChild(cardEl);
+        }
+        revisionColumns.appendChild(col);
+      });
+    }
+  }
+
+  // ─── Render content blocks recursively ───
+  function renderContentBlocks(container: HTMLElement, blocks: any[]) {
+    for (const block of blocks) {
+      switch (block.type) {
+        case 'text': {
+          const p = document.createElement('p');
+          p.className = 'body-text';
+          p.textContent = block.value;
+          container.appendChild(p);
+          break;
+        }
+        case 'formula': {
+          const div = document.createElement('div');
+          div.className = 'formula-block';
+          if (block.label) {
+            const label = document.createElement('p');
+            label.className = 'body-text';
+            label.textContent = block.label;
+            div.appendChild(label);
+          }
+          const formula = document.createElement('p');
+          formula.className = 'formula-math';
+          formula.textContent = block.formula;
+          div.appendChild(formula);
+          if (block.explanation) {
+            const exp = document.createElement('p');
+            exp.className = 'body-text-small';
+            exp.textContent = block.explanation;
+            div.appendChild(exp);
+          }
+          container.appendChild(div);
+          break;
+        }
+        case 'callout': {
+          const p = document.createElement('p');
+          p.className = 'callout-bold';
+          p.textContent = block.value;
+          container.appendChild(p);
+          break;
+        }
+        case 'list': {
+          const ul = document.createElement('ul');
+          ul.className = 'content-list';
+          for (const item of (block.items || [])) {
+            const li = document.createElement('li');
+            li.textContent = item;
+            ul.appendChild(li);
+          }
+          container.appendChild(ul);
+          break;
+        }
+        case 'subheading': {
+          const sub = document.createElement('div');
+          sub.className = 'sub-section';
+          const h4 = document.createElement('h4');
+          h4.className = 'sub-heading';
+          h4.textContent = block.value;
+          sub.appendChild(h4);
+          if (block.content) {
+            const inner = document.createElement('div');
+            inner.className = 'text-stack';
+            renderContentBlocks(inner, block.content);
+            sub.appendChild(inner);
+          }
+          container.appendChild(sub);
+          break;
+        }
+        case 'signConvention': {
+          const grid = document.createElement('div');
+          grid.className = 'sign-grid';
+          for (const item of (block.items || [])) {
+            const signItem = document.createElement('div');
+            signItem.className = 'sign-item';
+            signItem.innerHTML = `
+              <span class="sign-label">${escapeHtml(item.label)} :</span>
+              <p class="body-text">&nbsp;${escapeHtml(item.positive)}<br/>&nbsp;${escapeHtml(item.negative)}</p>
+            `;
+            grid.appendChild(signItem);
+          }
+          container.appendChild(grid);
+          break;
+        }
+        case 'processCard': {
+          const card = document.createElement('div');
+          card.className = 'process-card';
+          const title = document.createElement('h4');
+          title.className = 'process-title';
+          title.textContent = block.title;
+          card.appendChild(title);
+          const body = document.createElement('div');
+          body.className = 'process-body';
+          for (const point of (block.points || [])) {
+            const p = document.createElement('p');
+            p.textContent = point;
+            body.appendChild(p);
+          }
+          card.appendChild(body);
+          container.appendChild(card);
+          break;
+        }
+      }
+    }
+  }
+
+  function escapeHtml(str: string): string {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+</script>
