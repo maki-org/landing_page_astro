@@ -136,7 +136,7 @@ import Layout from "../layouts/Layout.astro";
   </main>
 </Layout>
 
-<style>
+<style is:global>
   /* ========================================
      PLAYGROUND PAGE
      ======================================== */
@@ -876,7 +876,6 @@ import Layout from "../layouts/Layout.astro";
   .revision-law-card {
     border-radius: 15px;
     padding: 16px;
-    margin-bottom: 24px;
     position: relative;
     background-color: #fff;
   }
@@ -1216,11 +1215,10 @@ import Layout from "../layouts/Layout.astro";
       try {
         // Create a simple sample audio notification
         setStatus("Using sample — please upload a real audio file for best results", false);
-        // Create a tiny valid WAV file as sample
-        const sampleResponse = await fetch('/sample_audio.wav');
+        const sampleResponse = await fetch('/sample_lature.mp3');
         if (sampleResponse.ok) {
           const blob = await sampleResponse.blob();
-          const file = new File([blob], 'sample_audio.wav', { type: 'audio/wav' });
+          const file = new File([blob], 'sample_lature.mp3', { type: 'audio/mpeg' });
           setFile(file);
           setStatus("Sample audio loaded!", false);
         } else {
