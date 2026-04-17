@@ -1215,10 +1215,10 @@ import Layout from "../layouts/Layout.astro";
       try {
         // Create a simple sample audio notification
         setStatus("Using sample — please upload a real audio file for best results", false);
-        const sampleResponse = await fetch('/sample_lature.mp3');
+        const sampleResponse = await fetch('/Sample_Lecture.mp3');
         if (sampleResponse.ok) {
           const blob = await sampleResponse.blob();
-          const file = new File([blob], 'sample_lature.mp3', { type: 'audio/mpeg' });
+          const file = new File([blob], 'Sample_Lecture.mp3', { type: 'audio/mpeg' });
           setFile(file);
           setStatus("Sample audio loaded!", false);
         } else {
