@@ -1216,24 +1216,22 @@ import Layout from "../layouts/Layout.astro";
   // ─── Sample Audio ───
   if (sampleLink) {
     sampleLink.addEventListener("click", async () => {
-      setStatus("Downloading sample audio...", true);
-      statusArea.style.display = "flex";
+      setStatus("Downloading 10MB sample audio... This may take a moment.", false);
       try {
-        // Create a simple sample audio notification
-        setStatus("Using sample — please upload a real audio file for best results", false);
         const sampleResponse = await fetch('/Sample_Lecture.mp3');
         if (sampleResponse.ok) {
           const blob = await sampleResponse.blob();
           const file = new File([blob], 'Sample_Lecture.mp3', { type: 'audio/mpeg' });
           setFile(file);
-          setStatus("Sample audio loaded!", false);
+          setStatus("Sample audio loaded! (Note: Upload your own real audio for best results)", false);
         } else {
-          setStatus("No sample audio available. Please upload your own file.", false);
+          setStatus("No sample audio available. Please upload your own file.", true);
         }
       } catch {
-        setStatus("Please upload an audio file instead.", false);
+        setStatus("Failed to fetch sample. Please upload an audio file instead.", true);
       }
-      setTimeout(() => { statusArea.style.display = "none"; }, 3000);
+      // Hide the status 4 seconds AFTER the download finishes or fails
+      setTimeout(() => { statusArea.style.display = "none"; }, 4000);
     });
   }
 
