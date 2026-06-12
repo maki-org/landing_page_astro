@@ -21,6 +21,7 @@ import Layout from "../layouts/Layout.astro";
               <div class="upload-stack">
                 <div class="drop-zone" id="drop-zone">
                   <span class="drop-text">Click or drag file here</span>
+                  <input type="file" id="file-input" accept=".wav,.mp3,.m4a,.ogg,.webm" style="display: none;" />
                 </div>
                 <span class="sample-link" id="sample-link">Use Sample Audio</span>
               </div>
@@ -1157,6 +1158,7 @@ import Layout from "../layouts/Layout.astro";
   let selectedFile: File | null = null;
 
   const dropZone = document.getElementById("drop-zone") as HTMLElement;
+  const fileInput = document.getElementById("file-input") as HTMLInputElement;
   const dropText = dropZone?.querySelector(".drop-text") as HTMLElement;
   const runBtn = document.getElementById("run-btn") as HTMLButtonElement;
   const statusArea = document.getElementById("status-area") as HTMLElement;
@@ -1174,6 +1176,10 @@ import Layout from "../layouts/Layout.astro";
   }
 
   if (dropZone) {
+    dropZone.addEventListener("dragenter", (e) => {
+      e.preventDefault();
+    });
+
     dropZone.addEventListener("dragover", (e) => {
       e.preventDefault();
       dropZone.style.borderColor = "#485C11";
@@ -1196,15 +1202,15 @@ import Layout from "../layouts/Layout.astro";
     });
 
     dropZone.addEventListener("click", () => {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = ".wav,.mp3,.m4a,.ogg,.webm";
-      input.onchange = (e) => {
+      if (fileInput) fileInput.click();
+    });
+
+    if (fileInput) {
+      fileInput.addEventListener("change", (e) => {
         const file = (e.target as HTMLInputElement).files?.[0];
         if (file) setFile(file);
-      };
-      input.click();
-    });
+      });
+    }
   }
 
   // ─── Sample Audio ───
