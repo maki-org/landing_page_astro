@@ -1,0 +1,114 @@
+---
+const clients = [
+  {
+    name: "Trivandrum International School",
+    logo: "/images/clients/trivandrum-international-school.jpeg",
+  },
+  {
+    name: "Saraswathi Vidyalaya",
+    logo: "/images/clients/saraswathi-vidyalaya.jpeg",
+  },
+  {
+    name: "Loyola School",
+    logo: "/images/clients/loyola-school.png",
+  },
+];
+---
+
+<section id="clients" class="clients-section">
+  <div class="container section-container">
+    <div class="header-wrapper">
+      <h2 class="section-title">Trusted By Schools</h2>
+      <p class="section-subtitle">
+        Classrooms already using Wy to turn every lecture into notes students
+        can revisit.
+      </p>
+    </div>
+
+    <div class="clients-grid">
+      {
+        clients.map((client) => (
+          <div class="client-card">
+            <img src={client.logo} alt={client.name} class="client-logo" />
+            <p class="client-name">{client.name}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .clients-section {
+    padding: 100px 0;
+  }
+
+  .section-container {
+    padding: 0 40px;
+    max-width: 1280px;
+  }
+
+  .header-wrapper {
+    border-top: 1px solid #929292;
+    padding-top: 80px;
+    margin-bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: 60px;
+    color: var(--c-black);
+    margin-bottom: 40px;
+  }
+
+  .section-subtitle {
+    font-size: 16px;
+    line-height: 22px;
+    color: var(--c-text-muted);
+    max-width: 720px;
+  }
+
+  .clients-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 80px;
+  }
+
+  .client-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 180px;
+  }
+
+  .client-logo {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+  }
+
+  .client-name {
+    font-size: 15px;
+    line-height: 21px;
+    color: var(--c-black);
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .section-title {
+      font-size: 48px;
+    }
+    .clients-grid {
+      gap: 48px;
+    }
+    .section-container {
+      padding: 0 20px;
+    }
+  }
+</style>
