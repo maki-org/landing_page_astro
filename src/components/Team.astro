@@ -3,16 +3,20 @@ const team = [
   {
     name: "Dev Nandan Anoop",
     role: "CEO & Founder",
-    bio: "Dev is a postgraduate in math and data science wanting to use his skills to build AI systems which act as a natural extension of the human race.",
     image: "/images/dev.jpeg",
     objectPosition: "center 10%",
   },
   {
     name: "Vishakh Abhayan",
     role: "CTO & Co-Founder",
-    bio: "Vishakh was a crucial part in implementing Beckn protocol to build a platform that accelerates industry expertise among college students.",
     image: "/images/visakh.png",
     objectPosition: "center 10%",
+  },
+  {
+    name: "Vishnu B S",
+    role: "Head of Operations",
+    image: "/images/vishnu.png",
+    objectPosition: "center 20%",
   },
 ];
 ---
@@ -44,7 +48,7 @@ const team = [
             <div class="team-info">
               <h3 class="team-name">{member.name}</h3>
               <p class="team-role">{member.role}</p>
-              <p class="team-bio">{member.bio}</p>
+              {member.bio && <p class="team-bio">{member.bio}</p>}
             </div>
           </div>
         ))
@@ -88,8 +92,8 @@ const team = [
 
   .team-grid {
     display: grid;
-    grid-template-columns: repeat(2, 302px);
-    gap: 130px; /* To account for space between 302px cards in 1174px frame */
+    grid-template-columns: repeat(3, 302px);
+    gap: 80px; /* To account for space between 302px cards in 1174px frame */
     justify-content: center;
   }
 
